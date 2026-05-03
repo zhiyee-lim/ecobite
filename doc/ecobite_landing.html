@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ecoBite — Snap leftovers · Cook new dishes · Waste nothing</title>
+<meta name="description" content="ecoBite is an AI-powered app that turns your fridge leftovers into delicious recipes. Save food, save money, save the planet."/>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+:root {
+  --primary: #1D9E75;
+  --primary-dark: #0F6E56;
+  --moss: #97C459;
+  --amber: #EF9F27;
+  --amber-light: #FAEEDA;
+  --ink: #383223;
+  --secondary: #6B6B65;
+  --hairline: #E5E5DC;
+  --cream: #FFF8F1;
+  --eco-bg: #F4F8EB;
+  --white: #FFFFFF;
+}
+html, body { background: var(--cream); color: var(--ink); font-family: -apple-system, "Segoe UI", "SF Pro Text", system-ui, sans-serif; line-height: 1.5; }
+body { overflow-x: hidden; }
+img, video { max-width: 100%; display: block; }
+
+/* ─── HEADER NAV ─── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255, 248, 241, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--hairline);
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  padding: 14px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; color: var(--ink); }
+.brand-mark {
+  width: 32px; height: 32px;
+  background: var(--primary);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.brand-mark::after {
+  content: ""; width: 14px; height: 14px;
+  background: var(--amber); border-radius: 50%;
+}
+.brand-name { font-size: 18px; }
+.nav-cta {
+  background: var(--primary); color: white;
+  border: none; padding: 10px 20px;
+  border-radius: 999px; font-weight: 700; font-size: 13px;
+  text-decoration: none; cursor: pointer;
+  transition: background 0.2s;
+}
+.nav-cta:hover { background: var(--primary-dark); }
+
+/* ─── HERO ─── */
+.hero {
+  padding: 80px 24px 60px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute; top: -200px; left: 50%;
+  transform: translateX(-50%);
+  width: 800px; height: 600px;
+  background: radial-gradient(circle, rgba(151, 196, 89, 0.18), transparent 70%);
+  pointer-events: none;
+}
+.hero-inner { max-width: 900px; margin: 0 auto; position: relative; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--eco-bg); color: var(--primary-dark);
+  padding: 6px 14px; border-radius: 999px;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.hero-badge::before { content: "🌱"; font-size: 14px; }
+.hero h1 {
+  font-size: clamp(36px, 7vw, 64px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+.hero h1 .accent {
+  color: var(--primary);
+  font-style: italic;
+}
+.hero .lead {
+  font-size: clamp(16px, 2.4vw, 20px);
+  color: var(--secondary);
+  max-width: 620px;
+  margin: 0 auto 36px;
+  line-height: 1.55;
+}
+.hero-actions {
+  display: flex; gap: 12px;
+  justify-content: center; flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.btn-primary {
+  background: var(--primary); color: white;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 999px;
+  font-weight: 800; font-size: 15px;
+  text-decoration: none; cursor: pointer;
+  transition: transform 0.15s, background 0.2s;
+  display: inline-flex; align-items: center; gap: 8px;
+  box-shadow: 0 8px 24px rgba(29, 158, 117, 0.25);
+}
+.btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+.btn-secondary {
+  background: white; color: var(--primary);
+  border: 2px solid var(--primary);
+  padding: 14px 30px;
+  border-radius: 999px;
+  font-weight: 800; font-size: 15px;
+  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-secondary:hover { background: var(--eco-bg); }
+.hero-stats {
+  display: flex; justify-content: center; gap: 32px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  color: var(--secondary);
+  font-size: 13px;
+}
+.hero-stats b { color: var(--primary-dark); font-weight: 800; }
+
+/* ─── VIDEO SECTION ─── */
+.video-section {
+  padding: 40px 24px 80px;
+  background: linear-gradient(180deg, transparent 0%, rgba(151, 196, 89, 0.08) 100%);
+}
+.video-wrap {
+  max-width: 900px; margin: 0 auto;
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 20px 60px rgba(15, 110, 86, 0.25);
+}
+.video-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; color: white;
+  flex-wrap: wrap; gap: 8px;
+}
+.video-header h2 {
+  font-size: 22px; font-weight: 800; letter-spacing: -0.01em;
+}
+.video-header .duration {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; gap: 6px;
+}
+.video-header .duration::before {
+  content: ""; width: 8px; height: 8px;
+  background: #FFB366; border-radius: 50%;
+  animation: pulse 1.4s infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+video {
+  width: 100%;
+  border-radius: 16px;
+  background: #0E1413;
+  display: block;
+}
+
+/* ─── FEATURES ─── */
+.features {
+  padding: 80px 24px;
+  max-width: 1100px; margin: 0 auto;
+}
+.section-eyebrow {
+  display: block;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 12px;
+}
+.section-title {
+  text-align: center;
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 56px;
+  line-height: 1.15;
+}
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+.feature-card {
+  background: white;
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  padding: 28px;
+  position: relative;
+}
+.feature-card::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--primary);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+.feature-icon {
+  width: 56px; height: 56px;
+  background: var(--eco-bg);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+.feature-card h3 { font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+.feature-card p { font-size: 14px; color: var(--secondary); line-height: 1.6; }
+
+/* ─── HOW IT WORKS ─── */
+.how {
+  padding: 80px 24px;
+  background: var(--eco-bg);
+}
+.how-inner { max-width: 1100px; margin: 0 auto; }
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.step {
+  text-align: center;
+  padding: 8px;
+  position: relative;
+}
+.step-circle {
+  width: 56px; height: 56px;
+  background: var(--primary);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px;
+  color: white; font-size: 22px; font-weight: 800;
+  box-shadow: 0 6px 18px rgba(29, 158, 117, 0.3);
+}
+.step h4 { font-size: 17px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+.step p { font-size: 13px; color: var(--secondary); line-height: 1.5; }
+
+/* ─── IMPACT STATS ─── */
+.impact {
+  padding: 80px 24px;
+  text-align: center;
+}
+.impact-inner { max-width: 1100px; margin: 0 auto; }
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+.stat {
+  padding: 28px 16px;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid var(--hairline);
+}
+.stat .num {
+  font-size: clamp(32px, 5vw, 44px);
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+.stat .lbl { font-size: 13px; color: var(--secondary); font-weight: 500; }
+
+/* ─── CTA SECTION ─── */
+.cta-section {
+  background: var(--primary-dark);
+  color: white;
+  padding: 80px 24px;
+  text-align: center;
+}
+.cta-inner { max-width: 700px; margin: 0 auto; }
+.cta-section h2 {
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 800;
+  margin-bottom: 16px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.cta-section .accent { color: var(--amber); font-style: italic; }
+.cta-section p {
+  font-size: 17px;
+  color: rgba(255, 248, 241, 0.85);
+  margin-bottom: 32px;
+}
+.cta-section .btn-primary {
+  background: var(--amber);
+  color: var(--ink);
+}
+.cta-section .btn-primary:hover { background: #FFB347; color: var(--ink); }
+
+/* ─── FOOTER ─── */
+footer {
+  padding: 36px 24px;
+  text-align: center;
+  background: var(--ink);
+  color: rgba(255, 248, 241, 0.7);
+  font-size: 13px;
+}
+footer a { color: var(--amber); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+.footer-meta { margin-top: 8px; font-size: 11px; opacity: 0.6; }
+
+/* Mobile tweaks */
+@media (max-width: 600px) {
+  .hero { padding: 56px 20px 40px; }
+  .video-section { padding: 32px 16px 60px; }
+  .video-wrap { padding: 20px; border-radius: 18px; }
+  .features, .how, .impact, .cta-section { padding: 60px 20px; }
+  .hero-stats { gap: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <span class="brand-name">ecoBite</span>
+    </div>
+    <a class="nav-cta" href="ecobite_app.html" target="_blank">Try the app →</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">SDG 3 · SDG 12 · AI-Powered</div>
+    <h1>Snap your leftovers.<br><span class="accent">Cook new dishes.</span><br>Waste nothing.</h1>
+    <p class="lead">An AI-powered app that turns your fridge leftovers into delicious recipes — saving food, money, and the planet, one bite at a time.</p>
+
+    <div class="hero-actions">
+      <a class="btn-primary" href="ecobite_app.html" target="_blank">
+        🚀 Open the live app
+      </a>
+      <a class="btn-secondary" href="#demo">
+        ▶ Watch 2-min demo
+      </a>
+    </div>
+
+    <div class="hero-stats">
+      <span><b>10+</b> screens</span>
+      <span><b>20</b> seed recipes</span>
+      <span><b>2</b> languages (中文 / EN)</span>
+      <span><b>RM 1,200</b> saved per household / year</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── VIDEO ─── -->
+<section class="video-section" id="demo">
+  <div class="video-wrap">
+    <div class="video-header">
+      <h2>See ecoBite in action</h2>
+      <div class="duration">1 min 48 sec</div>
+    </div>
+    <video controls poster="" preload="metadata" playsinline>
+      <source src="ecobite_demo.mp4" type="video/mp4">
+      Your browser does not support video. Please <a href="ecobite_demo.mp4" style="color:#FFB366">download the video</a>.
+    </video>
+  </div>
+</section>
+
+<!-- ─── FEATURES ─── -->
+<section class="features">
+  <span class="section-eyebrow">What ecoBite does</span>
+  <h2 class="section-title">Three taps from photo to dinner</h2>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📷</div>
+      <h3>AI Vision Recognition</h3>
+      <p>Snap a photo of your fridge. Claude vision identifies every ingredient with confidence scores so you trust what's detected.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🍳</div>
+      <h3>Smart Recipe Matching</h3>
+      <p>Get four personalized dishes ranked by ingredient match. Filter by cuisine, time, dietary needs, or available equipment.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌱</div>
+      <h3>Eco Impact Tracking</h3>
+      <p>See your weekly food saved (kg) and money saved (RM). Build a habit by seeing your real environmental impact compound.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ─── -->
+<section class="how">
+  <div class="how-inner">
+    <span class="section-eyebrow">How it works</span>
+    <h2 class="section-title">From fridge photo to finished meal in 30 seconds</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-circle">1</div>
+        <h4>Snap</h4>
+        <p>Open camera, photograph leftovers</p>
+      </div>
+      <div class="step">
+        <div class="step-circle">2</div>
+        <h4>Detect</h4>
+        <p>AI identifies items with confidence</p>
+      </div>
+      <div class="step">
+        <div class="step-circle">3</div>
+        <h4>Refine</h4>
+        <p>Edit chips, add dietary preferences</p>
+      </div>
+      <div class="step">
+        <div class="step-circle">4</div>
+        <h4>Match</h4>
+        <p>4 ranked recipes appear instantly</p>
+      </div>
+      <div class="step">
+        <div class="step-circle">5</div>
+        <h4>Cook</h4>
+        <p>Step-by-step instructions, save & share</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── IMPACT ─── -->
+<section class="impact">
+  <div class="impact-inner">
+    <span class="section-eyebrow">Real impact, real numbers</span>
+    <h2 class="section-title">Per household, per year</h2>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="num">RM 1,200</div>
+        <div class="lbl">saved on groceries</div>
+      </div>
+      <div class="stat">
+        <div class="num">120 kg</div>
+        <div class="lbl">food rescued from the bin</div>
+      </div>
+      <div class="stat">
+        <div class="num">240 kg</div>
+        <div class="lbl">CO₂ emissions avoided</div>
+      </div>
+      <div class="stat">
+        <div class="num">52 wk</div>
+        <div class="lbl">of habit-forming streaks</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ─── -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2>Every leftover deserves <span class="accent">a second chance.</span></h2>
+    <p>The app is fully working. Try it in your browser — no install, no signup.</p>
+    <a class="btn-primary" href="ecobite_app.html" target="_blank">
+      Open ecoBite app →
+    </a>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <p>© 2026 ecoBite · An AI sous chef for zero-waste cooking</p>
+  <p class="footer-meta">Aligned with UN SDG 3 (Good Health and Well-being) + SDG 12 (Responsible Consumption and Production)</p>
+</footer>
+
+</body>
+</html>

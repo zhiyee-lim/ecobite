@@ -1,0 +1,3117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>ecoBite — 剩食变美味</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          background: "#fff8f1",
+          error: "#a73b21",
+          "secondary-dim": "#475653",
+          "surface-container-highest": "#ede1cb",
+          "surface-container": "#f7edda",
+          "primary-dim": "#7b4600",
+          "outline-variant": "#bcb19c",
+          secondary: "#53625f",
+          "on-error": "#fff7f6",
+          tertiary: "#5e5f60",
+          primary: "#8b5109",
+          "surface-container-high": "#f2e7d3",
+          outline: "#837a67",
+          "on-secondary-container": "#455551",
+          "surface-container-low": "#fdf2e2",
+          "on-secondary": "#ecfdf8",
+          "error-container": "#fd795a",
+          "primary-fixed-dim": "#eda458",
+          "tertiary-container": "#ffffff",
+          "on-background": "#383223",
+          "inverse-primary": "#fdb164",
+          "on-primary": "#fff7f4",
+          surface: "#fff8f1",
+          "on-primary-container": "#5b3300",
+          "primary-container": "#fdb164",
+          "on-surface-variant": "#665e4d",
+          "secondary-container": "#d5e6e1",
+          "on-surface": "#383223",
+          "surface-variant": "#ede1cb",
+          "surface-container-lowest": "#ffffff",
+          "secondary-fixed-dim": "#c7d8d3",
+          "primary-fixed": "#fdb164",
+          "secondary-fixed": "#d5e6e1",
+          /* eco accent */
+          "eco-leaf": "#7ea05a",
+          "eco-leaf-dim": "#5d7c3e",
+          "eco-leaf-container": "#dfe9cd"
+        },
+        borderRadius: {
+          DEFAULT: "1rem",
+          lg: "2rem",
+          xl: "3rem",
+          full: "9999px"
+        },
+        fontFamily: {
+          headline: ["Plus Jakarta Sans"],
+          body: ["Be Vietnam Pro"],
+          label: ["Plus Jakarta Sans"]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'Be Vietnam Pro', sans-serif; background:#1a1814; min-height:100vh; }
+  .font-headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    display: inline-block; line-height: 1;
+  }
+  .phone-frame {
+    width: 390px; max-width: 100vw; height: 844px; max-height: 100vh;
+    background: #fff8f1; border-radius: 40px; overflow: hidden;
+    border: 8px solid #0f0f1e; position: relative;
+    display: flex; flex-direction: column;
+  }
+  .screen { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+  .screen.active { display: flex; }
+  .scroll-area { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 100px; }
+  .scroll-area::-webkit-scrollbar { display: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .status-bar {
+    background:#1a1814; display:flex; justify-content:space-between; align-items:center;
+    padding:10px 24px 6px; flex-shrink:0;
+  }
+  .status-bar span { color:#fff; font-size:11px; font-weight:500; }
+  /* eco logo mark */
+  .logo-mark {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(135deg, #FDB164 0%, #7ea05a 100%);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .toast {
+    position: absolute; bottom: 110px; left: 50%; transform: translateX(-50%);
+    background:#383223; color:#fff8f1; padding:10px 20px; border-radius:24px;
+    font-size:13px; font-weight:500; z-index:100; opacity:0; transition: opacity .25s;
+    pointer-events:none; white-space:nowrap;
+  }
+  .toast.show { opacity: 1; }
+  /* spinner */
+  .spinner {
+    width:40px; height:40px; border:3px solid #f7edda; border-top-color:#8b5109;
+    border-radius:50%; animation: spin .8s linear infinite; margin: 0 auto;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  /* eco badge stripe */
+  .eco-stripe {
+    background: linear-gradient(90deg, rgba(126,160,90,0.12) 0%, rgba(253,177,100,0.10) 100%);
+  }
+  /* hide spin buttons on number inputs */
+  input[type=number]::-webkit-inner-spin-button { display:none; }
+  input[type=number] { -moz-appearance: textfield; }
+</style>
+</head>
+<body class="flex justify-center items-center">
+
+<div class="phone-frame">
+
+  <!-- ═══ STATUS BAR ═══ -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="flex gap-1.5 items-center">
+      <svg width="15" height="11" viewBox="0 0 15 11" fill="white"><rect x="0" y="4" width="3" height="7" rx="1"/><rect x="4" y="2" width="3" height="9" rx="1"/><rect x="8" y="0" width="3" height="11" rx="1"/><rect x="12" y="0" width="3" height="11" rx="1" opacity=".3"/></svg>
+      <svg width="12" height="11" viewBox="0 0 12 11" fill="white"><circle cx="6" cy="9" r="1.5"/><path d="M6 5C7.5 5 8.8 5.7 9.8 6.8l1-1.1C9.5 4.3 7.9 3.5 6 3.5S2.5 4.3 1.2 5.7l1 1.1C3.2 5.7 4.5 5 6 5z" opacity=".6"/><path d="M6 2.5C8.2 2.5 10.2 3.5 11.5 5.1L12.5 4C10.9 2.1 8.6 1 6 1S1.1 2.1-.5 4l1 1.1C1.8 3.5 3.8 2.5 6 2.5z" opacity=".3"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3.5" stroke="white" stroke-opacity=".35"/><rect x="1.5" y="1.5" width="16" height="9" rx="2.5" fill="white"/><path d="M23 4v4a2 2 0 0 0 0-4z" fill="white" fill-opacity=".4"/></svg>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- ═══════════════════ HOME SCREEN ════════════════════════ -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="screen active" id="screen-home">
+    <!-- TOP APP BAR -->
+    <header class="bg-[#FFF6E9]/70 backdrop-blur-xl flex-shrink-0">
+      <div class="flex justify-between items-center px-6 h-16">
+        <div class="flex items-center gap-2">
+          <div class="logo-mark">
+            <span class="material-symbols-outlined text-white" style="font-size:18px;font-variation-settings:'FILL' 1;">eco</span>
+          </div>
+          <h1 class="text-[#8b5109] font-bold tracking-tight text-xl font-headline">ecoBite</h1>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="lang-toggle" onclick="toggleLang()" class="flex items-center gap-1 text-[#FFB366] font-headline font-bold text-sm hover:opacity-80 transition-opacity active:scale-95 bg-primary-container/20 px-3 py-1.5 rounded-full"><span class="material-symbols-outlined" style="font-size:16px;">translate</span><span id="lang-label">EN</span></button>
+          <button onclick="goTo('login')" class="w-9 h-9 rounded-full overflow-hidden border-2 border-primary-container active:scale-95 transition-transform" id="home-avatar">
+            <img id="home-avatar-img" src="" alt="user avatar" class="w-full h-full object-cover"/>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="scroll-area px-6 pt-4">
+      <!-- Greeting -->
+      <div class="mb-5">
+        <p class="text-[13px] text-secondary"><span data-i18n="goodmorning">早安</span>, <span id="user-name-greeting" class="font-medium">张妈妈</span> 👋</p>
+        <h2 class="text-2xl font-bold font-headline tracking-tight text-on-surface mt-1" data-i18n-html="hometitle">今天的剩食<br/>能变成什么？</h2>
+      </div>
+
+      <!-- Search bar (tappable, opens search screen) -->
+      <button onclick="goTo('search')" class="relative mb-6 w-full h-12 bg-surface-container-high rounded-full text-left active:scale-[0.99] transition-transform">
+        <span class="material-symbols-outlined text-secondary absolute left-4 top-1/2 -translate-y-1/2" style="font-size:20px;">search</span>
+        <span class="text-[14px] text-on-surface-variant/60 pl-11" data-i18n="searchph">搜食材、菜谱、剩菜...</span>
+      </button>
+
+      <!-- HERO: Snap leftovers (the primary CTA) -->
+      <section class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-DEFAULT p-6 mb-6 cursor-pointer active:scale-[0.99] transition-transform" onclick="goTo('camera')">
+        <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/15 rounded-full"></div>
+        <div class="absolute -bottom-12 -left-8 w-32 h-32 bg-eco-leaf/25 rounded-full"></div>
+        <div class="relative z-10">
+          <div class="inline-flex items-center gap-1.5 bg-white/25 backdrop-blur px-3 py-1 rounded-full text-white text-[11px] font-medium mb-3">
+            <span class="material-symbols-outlined" style="font-size:14px;">auto_awesome</span>
+            <span data-i18n="aibadge">AI 视觉识别</span>
+          </div>
+          <h3 class="text-xl font-bold font-headline text-white leading-tight mb-2" data-i18n="herotitle">拍下剩食 一键变美味</h3>
+          <p class="text-white/85 text-[12px] mb-5 max-w-[220px] leading-relaxed" data-i18n="herodesc">对准盘中剩菜，AI 为您搭配新菜谱，零浪费。</p>
+          <div class="flex items-center gap-3">
+            <button class="bg-white text-primary font-headline font-bold text-[13px] px-5 h-10 rounded-full flex items-center gap-2 active:scale-95 transition-transform">
+              <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1;">photo_camera</span>
+              <span data-i18n="snapnow">开始拍照</span>
+            </button>
+            <span class="text-white/80 text-[11px] font-bold tracking-wider" data-i18n="herosub">→ 找新菜谱</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick action bento grid -->
+      <div class="grid grid-cols-2 gap-3 mb-6">
+        <button onclick="goTo('cookbook')" class="bg-secondary-container/60 rounded-DEFAULT p-4 text-left active:scale-95 transition-transform">
+          <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-3">
+            <span class="material-symbols-outlined text-eco-leaf-dim" style="font-size:20px;font-variation-settings:'FILL' 1;">menu_book</span>
+          </div>
+          <p class="font-bold text-[13px] text-on-secondary-container" data-i18n="mycookbook">我的菜谱</p>
+          <p class="text-[10px] text-on-secondary-container/70 mt-0.5" data-i18n="cookbookcount">已收藏 12 道</p>
+        </button>
+        <button class="bg-surface-container-high rounded-DEFAULT p-4 text-left active:scale-95 transition-transform">
+          <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center mb-3">
+            <span class="material-symbols-outlined text-on-primary-container" style="font-size:20px;font-variation-settings:'FILL' 1;">shopping_basket</span>
+          </div>
+          <p class="font-bold text-[13px] text-on-surface" data-i18n="shopping">购物清单</p>
+          <p class="text-[10px] text-on-surface-variant mt-0.5" data-i18n="shoppingcount">3 项待补充</p>
+        </button>
+      </div>
+
+      <!-- Eco impact card (LIVE weekly calculation — numbers upfront) -->
+      <section onclick="goTo('history')" class="eco-stripe rounded-DEFAULT p-4 mb-6 border border-eco-leaf/20 active:scale-[0.99] transition-transform cursor-pointer">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-eco-leaf-dim" style="font-size:18px;font-variation-settings:'FILL' 1;">eco</span>
+            <p class="text-[12px] text-eco-leaf-dim font-bold" data-i18n="ecoweek">本周环保贡献</p>
+          </div>
+          <span class="material-symbols-outlined text-outline-variant" style="font-size:18px;">chevron_right</span>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-white/70 rounded-DEFAULT p-3">
+            <p class="font-headline font-bold text-[20px] text-primary leading-tight" id="home-eco-money">RM 0.00</p>
+            <p class="text-[10px] text-secondary font-medium mt-0.5" data-i18n="moneysavedweek">本周节省</p>
+          </div>
+          <div class="bg-white/70 rounded-DEFAULT p-3">
+            <p class="font-headline font-bold text-[20px] text-eco-leaf-dim leading-tight" id="home-eco-waste">0.00 kg</p>
+            <p class="text-[10px] text-secondary font-medium mt-0.5" data-i18n="foodsavedweek">挽救食材</p>
+          </div>
+        </div>
+        <div class="flex items-center justify-between mt-3 pt-3 border-t border-eco-leaf/15">
+          <p class="text-[11px] text-secondary"><span class="font-bold text-on-surface" id="home-eco-count">0</span> <span data-i18n="cooksthisweek">次烹饪 · 本周</span></p>
+          <p class="text-[11px] text-eco-leaf-dim font-bold" data-i18n="viewdetails">查看详情 →</p>
+        </div>
+      </section>
+
+      <!-- Recent recipes (saved) -->
+      <section class="mb-6">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary" style="font-size:20px;">history</span>
+            <h3 class="font-bold font-headline text-[15px] text-on-surface" data-i18n="recentmade">最近做过</h3>
+          </div>
+          <button onclick="goTo('history')" class="text-[12px] text-primary font-bold active:scale-95 transition-transform" data-i18n="more">更多 ›</button>
+        </div>
+        <div class="space-y-3" id="home-history-list"></div>
+      </section>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="absolute bottom-0 left-0 w-full flex justify-around items-center px-4 pb-5 pt-3 bg-[#FFF6E9]/80 backdrop-blur-xl shadow-[0_-4px_32px_rgba(56,50,35,0.06)] rounded-t-[2rem]">
+      <button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-5 py-2 active:scale-110 transition-transform">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:22px;">home</span>
+        <span class="font-headline text-[10px] font-bold mt-0.5" data-i18n="navhome">首页</span>
+      </button>
+      <button onclick="goTo('camera')" class="flex flex-col items-center justify-center text-secondary px-5 py-2 active:scale-110 transition-transform">
+        <span class="material-symbols-outlined" style="font-size:22px;">photo_camera</span>
+        <span class="font-headline text-[10px] font-medium mt-0.5" data-i18n="navsnap">拍照</span>
+      </button>
+      <button onclick="goTo('cookbook')" class="flex flex-col items-center justify-center text-secondary px-5 py-2 active:scale-110 transition-transform">
+        <span class="material-symbols-outlined" style="font-size:22px;">menu_book</span>
+        <span class="font-headline text-[10px] font-medium mt-0.5" data-i18n="navrecipes">菜谱</span>
+      </button>
+      <button onclick="goTo('login')" class="flex flex-col items-center justify-center text-secondary px-5 py-2 active:scale-110 transition-transform">
+        <span class="material-symbols-outlined" style="font-size:22px;">person</span>
+        <span class="font-headline text-[10px] font-medium mt-0.5" data-i18n="navme">我的</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- ═══════════════════ CAMERA SCREEN ══════════════════════ -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-camera">
+    <header class="bg-[#FFF6E9]/70 backdrop-blur-xl flex-shrink-0">
+      <div class="flex justify-between items-center px-6 h-16">
+        <div class="flex items-center gap-3">
+          <button onclick="goTo('home')" class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center active:scale-90 transition-transform">
+            <span class="material-symbols-outlined text-on-surface" style="font-size:20px;">arrow_back</span>
+          </button>
+          <h1 class="text-on-surface font-bold tracking-tight text-lg font-headline" data-i18n="snaptitle">拍下剩食</h1>
+        </div>
+        <button class="text-secondary text-sm font-medium" data-i18n="skip">跳过</button>
+      </div>
+    </header>
+
+    <div class="scroll-area px-6 pt-2">
+      <!-- Preview wrapper (with overlay controls when photo is loaded) -->
+      <div id="preview-wrap" class="hidden relative mb-4">
+        <img id="preview-img" class="w-full rounded-DEFAULT object-cover" style="max-height:280px;" alt="预览图"/>
+        <!-- Overlay: corner controls -->
+        <div class="absolute top-3 right-3 flex gap-2">
+          <button onclick="retakePhoto()" class="w-10 h-10 rounded-full bg-black/55 backdrop-blur flex items-center justify-center active:scale-90 transition-transform" title="Retake">
+            <span class="material-symbols-outlined text-white" style="font-size:20px;">refresh</span>
+          </button>
+          <button onclick="discardPhoto()" class="w-10 h-10 rounded-full bg-black/55 backdrop-blur flex items-center justify-center active:scale-90 transition-transform" title="Remove">
+            <span class="material-symbols-outlined text-white" style="font-size:20px;">close</span>
+          </button>
+        </div>
+        <!-- Bottom badge: photo info -->
+        <div class="absolute bottom-3 left-3 bg-black/55 backdrop-blur rounded-full px-3 py-1.5 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-white" style="font-size:14px;">check_circle</span>
+          <span class="text-white text-[11px] font-bold" data-i18n="photoready">照片已就绪</span>
+        </div>
+      </div>
+
+      <div id="cam-area" onclick="document.getElementById('file-input').click()" class="relative overflow-hidden bg-gradient-to-br from-surface-container-low to-surface-container rounded-lg p-8 text-center cursor-pointer active:scale-[0.98] transition-transform border-2 border-dashed border-primary/40 mb-5">
+        <div class="absolute -top-12 -right-12 w-40 h-40 bg-primary-container/20 rounded-full blur-3xl"></div>
+        <div class="relative z-10">
+          <div class="w-24 h-24 bg-gradient-to-br from-primary to-primary-container rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
+            <span class="material-symbols-outlined text-white" style="font-size:48px;font-variation-settings:'FILL' 1;">photo_camera</span>
+          </div>
+          <h3 class="font-bold font-headline text-[17px] text-on-surface mb-2" data-i18n="snapcta">点击拍照或选择图片</h3>
+          <p class="text-secondary text-[12px] leading-relaxed max-w-[240px] mx-auto" data-i18n-html="snapdesc">让 AI 识别您的剩菜剩饭<br/>智能搭配出新菜谱</p>
+        </div>
+      </div>
+      <input type="file" id="file-input" accept="image/*" capture="environment" class="hidden" onchange="handlePhoto(event)"/>
+
+      <!-- analyzing -->
+      <div id="analyzing" class="hidden bg-surface-container-low rounded-DEFAULT p-6 text-center mb-4">
+        <div class="spinner mb-3"></div>
+        <p class="text-on-surface font-bold font-headline text-[14px]" data-i18n="analyzing">AI 正在识别食材...</p>
+        <p class="text-secondary text-[11px] mt-1" data-i18n="pleasewait">请稍候</p>
+      </div>
+
+      <!-- Action buttons (when photo is loaded) -->
+      <div id="photo-actions" class="hidden mb-3">
+        <button id="analyze-btn" class="w-full h-14 bg-primary text-on-primary rounded-full font-headline font-bold text-[15px] active:scale-95 transition-transform mb-2 flex items-center justify-center gap-2" onclick="analyzePhoto()">
+          <span class="material-symbols-outlined" style="font-size:20px;">auto_awesome</span>
+          <span data-i18n="identify">识别食材 →</span>
+        </button>
+        <button onclick="retakePhoto()" class="w-full h-12 bg-transparent text-primary border-2 border-primary/40 rounded-full font-bold text-[13px] active:scale-95 transition-transform flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined" style="font-size:18px;">refresh</span>
+          <span data-i18n="retake">重新拍照</span>
+        </button>
+      </div>
+
+      <!-- tips -->
+      <div class="bg-secondary-container/40 rounded-DEFAULT p-4 border-l-4 border-eco-leaf flex gap-3">
+        <span class="material-symbols-outlined text-eco-leaf-dim flex-shrink-0" style="font-size:22px;">tips_and_updates</span>
+        <div>
+          <p class="font-bold font-headline text-[13px] text-on-secondary-container mb-1" data-i18n="phototip">拍照小贴士</p>
+          <p class="text-[11px] text-on-secondary-container/80 leading-relaxed" data-i18n-html="phototipdesc">将食材分散摆放在浅色盘子上，<br/>光线充足时识别更准确。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- ═════════════════ INGREDIENTS SCREEN ═══════════════════ -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-ingredients">
+    <header class="bg-[#FFF6E9]/70 backdrop-blur-xl flex-shrink-0">
+      <div class="flex items-center gap-3 px-6 h-16">
+        <button onclick="goTo('camera')" class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center active:scale-90 transition-transform">
+          <span class="material-symbols-outlined text-on-surface" style="font-size:20px;">arrow_back</span>
+        </button>
+        <h1 class="text-on-surface font-bold tracking-tight text-lg font-headline flex-1" data-i18n="yourings">您的食材</h1>
+        <span class="bg-eco-leaf-container text-eco-leaf-dim text-[11px] font-bold px-3 py-1 rounded-full" id="ing-count">5 项</span>
+      </div>
+    </header>
+
+    <div class="scroll-area px-6 pt-2">
+      <!-- AI detection summary -->
+      <div class="bg-surface-container-low rounded-DEFAULT p-4 mb-5 flex items-center gap-3">
+        <span class="material-symbols-outlined text-primary" style="font-size:24px;font-variation-settings:'FILL' 1;">auto_awesome</span>
+        <div class="flex-1 min-w-0">
+          <p class="text-[13px] text-on-surface" data-i18n-html="aidetected"><span class="font-bold">AI 已识别</span> · 点击删除错误项</p>
+          <p class="text-[11px] text-secondary mt-0.5" id="detection-summary"></p>
+        </div>
+      </div>
+
+      <!-- Ingredient chips -->
+      <h3 class="font-bold font-headline text-[14px] text-on-surface mb-3" data-i18n="inglist">食材清单</h3>
+      <div class="flex flex-wrap gap-2 mb-5" id="chips-wrap"></div>
+
+      <!-- Add ingredient -->
+      <div class="flex gap-2 mb-6">
+        <div class="relative flex-1">
+          <span class="material-symbols-outlined text-secondary absolute left-4 top-1/2 -translate-y-1/2" style="font-size:18px;">add</span>
+          <input type="text" id="add-input" placeholder="补充其他食材..." data-i18n-placeholder="addingph" class="w-full h-11 pl-10 pr-3 bg-surface-container-high rounded-full text-[13px] text-on-surface placeholder-on-surface-variant/60 border-none focus:ring-2 focus:ring-primary-fixed transition-all" onkeydown="if(event.key==='Enter')addIngredient()"/>
+        </div>
+        <button onclick="addIngredient()" class="h-11 px-5 bg-primary text-on-primary rounded-full font-bold text-[13px] active:scale-95 transition-transform" data-i18n="add">添加</button>
+      </div>
+
+      <!-- Dietary preferences -->
+      <h3 class="font-bold font-headline text-[14px] text-on-surface mb-3" data-i18n="dietpref">饮食偏好</h3>
+      <div class="flex flex-wrap gap-2 mb-6" id="pref-row">
+        <button class="pref-chip h-9 px-4 rounded-full bg-surface-container-high text-secondary text-[12px] font-medium border border-outline-variant/30 active:scale-95 transition-transform" onclick="togglePref(this)" data-i18n="vegetarian">素食</button>
+        <button class="pref-chip h-9 px-4 rounded-full bg-surface-container-high text-secondary text-[12px] font-medium border border-outline-variant/30 active:scale-95 transition-transform" onclick="togglePref(this)" data-i18n="vegan">纯素</button>
+        <button class="pref-chip h-9 px-4 rounded-full bg-surface-container-high text-secondary text-[12px] font-medium border border-outline-variant/30 active:scale-95 transition-transform" onclick="togglePref(this)" data-i18n="glutenfree">无麸质</button>
+        <button class="pref-chip h-9 px-4 rounded-full bg-surface-container-high text-secondary text-[12px] font-medium border border-outline-variant/30 active:scale-95 transition-transform" onclick="togglePref(this)" data-i18n="lowfat">低脂</button>
+        <button class="pref-chip h-9 px-4 rounded-full bg-surface-container-high text-secondary text-[12px] font-medium border border-outline-variant/30 active:scale-95 transition-transform" onclick="togglePref(this)" data-i18n="mildspice">少辣</button>
+      </div>
+
+      <!-- Time preference -->
+      <h3 class="font-bold font-headline text-[14px] text-on-surface mb-3" data-i18n="cooktime">理想烹饪时间</h3>
+      <div class="grid grid-cols-3 gap-2 mb-8">
+        <button class="time-chip h-12 rounded-DEFAULT bg-surface-container-high text-on-surface text-[12px] font-medium border border-outline-variant/30 active:scale-95 transition-transform" onclick="toggleTime(this)">
+          <span class="block font-bold" data-i18n="time15">15 分钟</span>
+          <span class="text-[10px] text-secondary" data-i18n="quick">快手菜</span>
+        </button>
+        <button class="time-chip h-12 rounded-DEFAULT bg-primary-container text-on-primary-container text-[12px] font-medium border-2 border-primary active:scale-95 transition-transform" onclick="toggleTime(this)">
+          <span class="block font-bold" data-i18n="time30">30 分钟</span>
+          <span class="text-[10px]" data-i18n="everyday">家常</span>
+        </button>
+        <button class="time-chip h-12 rounded-DEFAULT bg-surface-container-high text-on-surface text-[12px] font-medium border border-outline-variant/30 active:scale-95 transition-transform" onclick="toggleTime(this)">
+          <span class="block font-bold" data-i18n="anytime">不限</span>
+          <span class="text-[10px] text-secondary" data-i18n="slowcook">慢炖</span>
+        </button>
+      </div>
+
+      <!-- CTA -->
+      <button onclick="findRecipes()" class="w-full h-14 bg-primary text-on-primary rounded-full font-headline font-bold text-[15px] active:scale-95 transition-transform flex items-center justify-center gap-2 mb-3">
+        <span class="material-symbols-outlined" style="font-size:20px;">restaurant</span>
+        <span data-i18n="findrecipes">AI 推荐菜谱</span>
+      </button>
+      <button onclick="discardPhoto(); goTo('camera');" class="w-full h-12 bg-transparent text-primary border-2 border-primary rounded-full font-bold text-[13px] active:scale-95 transition-transform flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined" style="font-size:18px;">refresh</span>
+        <span data-i18n="recapture">重新拍照</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- ════════════════════ RECIPES SCREEN ════════════════════ -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-recipes">
+    <header class="bg-[#FFF6E9]/70 backdrop-blur-xl flex-shrink-0">
+      <div class="flex items-center gap-3 px-6 h-16">
+        <button onclick="goTo('ingredients')" class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center active:scale-90 transition-transform">
+          <span class="material-symbols-outlined text-on-surface" style="font-size:20px;">arrow_back</span>
+        </button>
+        <div class="flex-1">
+          <h1 class="text-on-surface font-bold tracking-tight text-lg font-headline" data-i18n="recipestitle">为你推荐</h1>
+          <p class="text-[11px] text-secondary" data-i18n-tpl="basedon"><span data-i18n-prefix>基于 </span><span id="ing-summary">5</span><span data-i18n-suffix> 种食材</span></p>
+        </div>
+        <button class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center active:scale-90">
+          <span class="material-symbols-outlined text-on-surface" style="font-size:20px;">tune</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="scroll-area px-6 pt-2">
+      <div id="recipes-loading" class="text-center py-16">
+        <div class="spinner mb-4"></div>
+        <p class="font-bold font-headline text-[14px] text-on-surface" data-i18n="airecipes">AI 正在为您搭配菜谱...</p>
+        <p class="text-[11px] text-secondary mt-1" data-i18n="analyzingdetails">分析剩食、计算营养、匹配偏好</p>
+      </div>
+
+      <div id="recipes-content" class="hidden">
+        <!-- Filter pills -->
+        <div class="flex gap-2 overflow-x-auto pb-3 no-scrollbar -mx-6 px-6 mb-2" id="filter-row"></div>
+
+        <!-- Recipe cards (Foodopedia editorial style) -->
+        <div class="space-y-4 pb-4" id="recipes-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- ════════════════════ DETAIL SCREEN ═════════════════════ -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-detail">
+    <div class="flex-1 overflow-y-auto scroll-area">
+      <!-- hero -->
+      <div id="detail-hero" class="relative h-64 flex items-end p-5 overflow-hidden bg-cover bg-center">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/10 z-10"></div>
+        <div class="absolute top-0 left-0 right-0 flex justify-between items-center p-4 z-20">
+          <button onclick="goTo('recipes')" class="w-10 h-10 rounded-full bg-white/85 backdrop-blur flex items-center justify-center active:scale-90 transition-transform">
+            <span class="material-symbols-outlined text-on-surface" style="font-size:20px;">arrow_back</span>
+          </button>
+          <div class="flex gap-2">
+            <button id="fav-btn" onclick="toggleSave()" class="w-10 h-10 rounded-full bg-white/85 backdrop-blur flex items-center justify-center active:scale-90 transition-transform">
+              <span id="fav-icon" class="material-symbols-outlined text-on-surface" style="font-size:20px;">bookmark</span>
+            </button>
+            <button onclick="shareRecipe()" class="w-10 h-10 rounded-full bg-white/85 backdrop-blur flex items-center justify-center active:scale-90 transition-transform">
+              <span class="material-symbols-outlined text-on-surface" style="font-size:20px;">share</span>
+            </button>
+          </div>
+        </div>
+        <div id="detail-hero-content" class="relative z-10 text-white"></div>
+      </div>
+
+      <div class="px-6 pt-5 pb-32">
+        <!-- Eco impact strip -->
+        <div class="eco-stripe rounded-DEFAULT p-3 mb-5 flex items-center gap-3 border border-eco-leaf/20">
+          <span class="material-symbols-outlined text-eco-leaf-dim flex-shrink-0" style="font-size:20px;font-variation-settings:'FILL' 1;">eco</span>
+          <p class="text-[12px] text-on-surface flex-1" data-i18n-tpl="usedscraps"><span data-i18n-prefix><span class="font-bold">使用 </span></span><span class="font-bold" id="detail-used">5</span><span data-i18n-mid><span class="font-bold"> 种剩食</span> · 减少厨余约 </span><span class="font-bold text-eco-leaf-dim" id="detail-waste">450g</span></p>
+        </div>
+
+        <!-- Stats grid -->
+        <div class="grid grid-cols-3 gap-2 mb-5" id="detail-stats"></div>
+
+        <!-- Need to buy -->
+        <div id="detail-needs"></div>
+
+        <!-- Ingredients -->
+        <h3 class="font-bold font-headline text-[15px] text-on-surface mb-3" data-i18n="ingsneeded">所需食材</h3>
+        <div class="bg-surface-container-lowest rounded-DEFAULT p-4 mb-5" id="detail-ingredients"></div>
+
+        <!-- Steps -->
+        <h3 class="font-bold font-headline text-[15px] text-on-surface mb-3" data-i18n="steps">烹饪步骤</h3>
+        <ol class="space-y-3 mb-6" id="detail-steps"></ol>
+
+        <!-- Storage tip -->
+        <div class="bg-secondary-container/30 rounded-DEFAULT p-4 border-l-4 border-secondary flex gap-3 mb-6">
+          <span class="material-symbols-outlined text-secondary flex-shrink-0" style="font-size:22px;">tips_and_updates</span>
+          <div>
+            <p class="font-bold font-headline text-[13px] text-on-secondary-container mb-1" data-i18n="storagetitle">次日存储建议</p>
+            <p class="text-[11px] text-on-secondary-container/80 leading-relaxed" id="detail-storage">
+              密封冷藏不超过 24 小时。食用前用中火加热至中心温度 75°C 以上。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sticky bottom CTA -->
+    <div class="absolute bottom-0 left-0 right-0 bg-[#FFF6E9]/95 backdrop-blur-xl px-5 pt-3 pb-5 border-t border-outline-variant/20">
+      <div class="grid grid-cols-3 gap-2">
+        <button onclick="toggleSave()" id="save-btn" class="h-12 bg-primary text-on-primary rounded-full font-bold text-[12px] active:scale-95 transition-transform flex items-center justify-center gap-1.5">
+          <span class="material-symbols-outlined" style="font-size:16px;">bookmark</span>
+          <span data-i18n="save">收藏</span>
+        </button>
+        <button onclick="showShoppingList()" class="h-12 bg-eco-leaf-container text-eco-leaf-dim rounded-full font-bold text-[12px] active:scale-95 transition-transform flex items-center justify-center gap-1.5">
+          <span class="material-symbols-outlined" style="font-size:16px;">shopping_basket</span>
+          <span data-i18n="shoplist">购物清单</span>
+        </button>
+        <button class="h-12 bg-surface-container-high text-on-surface rounded-full font-bold text-[12px] active:scale-95 transition-transform flex items-center justify-center gap-1.5">
+          <span class="material-symbols-outlined" style="font-size:16px;">play_arrow</span>
+          <span data-i18n="start">开始</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- ═══════════════════ COOKBOOK SCREEN ════════════════════ -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-cookbook">
+    <header class="bg-[#FFF6E9]/70 backdrop-blur-xl flex-shrink-0">
+      <div class="flex items-center gap-3 px-6 h-16">
+        <h1 class="text-on-surface font-bold tracking-tight text-lg font-headline flex-1" data-i18n="mycookbook2">我的菜谱</h1>
+        <button class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center active:scale-90">
+          <span class="material-symbols-outlined text-on-surface" style="font-size:20px;">search</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="scroll-area px-6 pt-2" id="cookbook-content"></div>
+
+    <nav class="absolute bottom-0 left-0 w-full flex justify-around items-center px-4 pb-5 pt-3 bg-[#FFF6E9]/80 backdrop-blur-xl shadow-[0_-4px_32px_rgba(56,50,35,0.06)] rounded-t-[2rem]">
+      <button onclick="goTo('home')" class="flex flex-col items-center justify-center text-secondary px-5 py-2 active:scale-110 transition-transform">
+        <span class="material-symbols-outlined" style="font-size:22px;">home</span>
+        <span class="font-headline text-[10px] font-medium mt-0.5">首页</span>
+      </button>
+      <button onclick="goTo('camera')" class="flex flex-col items-center justify-center text-secondary px-5 py-2 active:scale-110 transition-transform">
+        <span class="material-symbols-outlined" style="font-size:22px;">photo_camera</span>
+        <span class="font-headline text-[10px] font-medium mt-0.5">拍照</span>
+      </button>
+      <button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-5 py-2 active:scale-110 transition-transform">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:22px;">menu_book</span>
+        <span class="font-headline text-[10px] font-bold mt-0.5">菜谱</span>
+      </button>
+      <button onclick="goTo('login')" class="flex flex-col items-center justify-center text-secondary px-5 py-2 active:scale-110 transition-transform">
+        <span class="material-symbols-outlined" style="font-size:22px;">person</span>
+        <span class="font-headline text-[10px] font-medium mt-0.5" data-i18n="navme">我的</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- ════════════════ LOGIN / PROFILE SCREEN ════════════════ -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-login">
+    <header class="bg-[#FFF6E9]/70 backdrop-blur-xl flex-shrink-0">
+      <div class="flex items-center gap-3 px-6 h-16">
+        <button onclick="goTo('home')" class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center active:scale-90 transition-transform">
+          <span class="material-symbols-outlined text-on-surface" style="font-size:20px;">arrow_back</span>
+        </button>
+        <h1 class="text-on-surface font-bold tracking-tight text-lg font-headline flex-1" data-i18n="profiletitle">个人资料</h1>
+      </div>
+    </header>
+
+    <div class="scroll-area px-6 pt-2">
+      <!-- Profile card -->
+      <div class="bg-gradient-to-br from-primary to-primary-container rounded-DEFAULT p-5 mb-5 relative overflow-hidden">
+        <div class="absolute -top-8 -right-8 w-32 h-32 bg-white/15 rounded-full"></div>
+        <div class="relative z-10 flex items-center gap-4">
+          <div class="w-16 h-16 rounded-full overflow-hidden border-4 border-white/30 flex-shrink-0">
+            <img id="profile-avatar-img" src="" alt="user avatar" class="w-full h-full object-cover"/>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-white font-headline font-bold text-[18px] truncate" id="profile-name">张妈妈</p>
+            <p class="text-white/80 text-[12px] truncate" id="profile-email">mama.zhang@example.com</p>
+            <p class="text-white/70 text-[10px] mt-0.5"><span data-i18n="memberSince">会员自</span> <span id="profile-since">2024.03</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Eco impact stats -->
+      <h3 class="font-bold font-headline text-[14px] text-on-surface mb-3" data-i18n="ecostats">环保统计</h3>
+      <div class="grid grid-cols-2 gap-3 mb-6">
+        <div class="bg-eco-leaf-container/40 rounded-DEFAULT p-4">
+          <p class="text-[11px] text-eco-leaf-dim font-bold uppercase tracking-wider mb-1" data-i18n="totalsaved">总挽救</p>
+          <p class="font-headline font-bold text-[22px] text-eco-leaf-dim">12.4 <span class="text-[12px]">kg</span></p>
+        </div>
+        <div class="bg-primary-container/30 rounded-DEFAULT p-4">
+          <p class="text-[11px] text-on-primary-container font-bold uppercase tracking-wider mb-1" data-i18n="totalrecipes">已做菜谱</p>
+          <p class="font-headline font-bold text-[22px] text-on-primary-container">28 <span class="text-[12px]" data-i18n="dishes">道</span></p>
+        </div>
+      </div>
+
+      <!-- Editable profile fields -->
+      <h3 class="font-bold font-headline text-[14px] text-on-surface mb-3" data-i18n="editprofile">编辑资料</h3>
+      <div class="bg-surface-container-lowest rounded-DEFAULT p-4 mb-5 space-y-4">
+        <div>
+          <label class="text-[11px] text-secondary font-bold uppercase tracking-wider block mb-1.5" data-i18n="displayname">显示名称</label>
+          <input type="text" id="edit-name" value="张妈妈" class="w-full h-11 px-4 bg-surface-container rounded-full text-[14px] text-on-surface border-none focus:ring-2 focus:ring-primary-fixed transition-all"/>
+        </div>
+        <div>
+          <label class="text-[11px] text-secondary font-bold uppercase tracking-wider block mb-1.5" data-i18n="email">电子邮箱</label>
+          <input type="email" id="edit-email" value="mama.zhang@example.com" class="w-full h-11 px-4 bg-surface-container rounded-full text-[14px] text-on-surface border-none focus:ring-2 focus:ring-primary-fixed transition-all"/>
+        </div>
+        <div>
+          <label class="text-[11px] text-secondary font-bold uppercase tracking-wider block mb-1.5" data-i18n="avatar">头像</label>
+          <div class="flex gap-2 flex-wrap" id="avatar-picker">
+            <!-- avatars rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <button onclick="saveProfile()" class="w-full h-12 bg-primary text-on-primary rounded-full font-headline font-bold text-[14px] active:scale-95 transition-transform mb-3" data-i18n="savechanges">
+        保存更改
+      </button>
+      <button onclick="logout()" class="w-full h-12 bg-transparent text-error border-2 border-error/40 rounded-full font-bold text-[13px] active:scale-95 transition-transform" data-i18n="logout">
+        退出登录
+      </button>
+    </div>
+
+    <nav class="absolute bottom-0 left-0 w-full flex justify-around items-center px-4 pb-5 pt-3 bg-[#FFF6E9]/80 backdrop-blur-xl shadow-[0_-4px_32px_rgba(56,50,35,0.06)] rounded-t-[2rem]">
+      <button onclick="goTo('home')" class="flex flex-col items-center justify-center text-secondary px-5 py-2 active:scale-110 transition-transform">
+        <span class="material-symbols-outlined" style="font-size:22px;">home</span>
+        <span class="font-headline text-[10px] font-medium mt-0.5" data-i18n="navhome">首页</span>
+      </button>
+      <button onclick="goTo('camera')" class="flex flex-col items-center justify-center text-secondary px-5 py-2 active:scale-110 transition-transform">
+        <span class="material-symbols-outlined" style="font-size:22px;">photo_camera</span>
+        <span class="font-headline text-[10px] font-medium mt-0.5" data-i18n="navsnap">拍照</span>
+      </button>
+      <button onclick="goTo('cookbook')" class="flex flex-col items-center justify-center text-secondary px-5 py-2 active:scale-110 transition-transform">
+        <span class="material-symbols-outlined" style="font-size:22px;">menu_book</span>
+        <span class="font-headline text-[10px] font-medium mt-0.5" data-i18n="navrecipes">菜谱</span>
+      </button>
+      <button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-5 py-2 active:scale-110 transition-transform">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:22px;">person</span>
+        <span class="font-headline text-[10px] font-bold mt-0.5" data-i18n="navme">我的</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- ═══════════════ HISTORY LIST SCREEN (More) ═════════════ -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-history">
+    <header class="bg-[#FFF6E9]/70 backdrop-blur-xl flex-shrink-0">
+      <div class="flex items-center gap-3 px-6 h-16">
+        <button onclick="goTo('home')" class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center active:scale-90 transition-transform">
+          <span class="material-symbols-outlined text-on-surface" style="font-size:20px;">arrow_back</span>
+        </button>
+        <div class="flex-1">
+          <h1 class="text-on-surface font-bold tracking-tight text-lg font-headline" data-i18n="historytitle">烹饪历史</h1>
+          <p class="text-[11px] text-secondary"><span id="history-count">0</span> <span data-i18n="dishesmade">道已做菜谱</span></p>
+        </div>
+        <button onclick="clearHistory()" class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center active:scale-90" title="Clear">
+          <span class="material-symbols-outlined text-secondary" style="font-size:20px;">delete_outline</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="scroll-area px-6 pt-2">
+      <!-- Eco summary -->
+      <div class="eco-stripe rounded-DEFAULT p-4 mb-5 border border-eco-leaf/20" id="history-eco-summary"></div>
+
+      <!-- Filter tabs -->
+      <div class="flex gap-2 overflow-x-auto pb-3 no-scrollbar -mx-6 px-6 mb-2" id="history-filter-row"></div>
+
+      <!-- History list grouped by date -->
+      <div id="history-list" class="pb-4"></div>
+    </div>
+
+    <nav class="absolute bottom-0 left-0 w-full flex justify-around items-center px-4 pb-5 pt-3 bg-[#FFF6E9]/80 backdrop-blur-xl shadow-[0_-4px_32px_rgba(56,50,35,0.06)] rounded-t-[2rem]">
+      <button onclick="goTo('home')" class="flex flex-col items-center justify-center text-secondary px-5 py-2 active:scale-110 transition-transform">
+        <span class="material-symbols-outlined" style="font-size:22px;">home</span>
+        <span class="font-headline text-[10px] font-medium mt-0.5" data-i18n="navhome">首页</span>
+      </button>
+      <button onclick="goTo('camera')" class="flex flex-col items-center justify-center text-secondary px-5 py-2 active:scale-110 transition-transform">
+        <span class="material-symbols-outlined" style="font-size:22px;">photo_camera</span>
+        <span class="font-headline text-[10px] font-medium mt-0.5" data-i18n="navsnap">拍照</span>
+      </button>
+      <button onclick="goTo('cookbook')" class="flex flex-col items-center justify-center text-secondary px-5 py-2 active:scale-110 transition-transform">
+        <span class="material-symbols-outlined" style="font-size:22px;">menu_book</span>
+        <span class="font-headline text-[10px] font-medium mt-0.5" data-i18n="navrecipes">菜谱</span>
+      </button>
+      <button onclick="goTo('login')" class="flex flex-col items-center justify-center text-secondary px-5 py-2 active:scale-110 transition-transform">
+        <span class="material-symbols-outlined" style="font-size:22px;">person</span>
+        <span class="font-headline text-[10px] font-medium mt-0.5" data-i18n="navme">我的</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- ═══════════ HISTORY DETAIL (single past cook) ══════════ -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-history-detail">
+    <div class="flex-1 overflow-y-auto scroll-area">
+      <!-- Hero with photo -->
+      <div id="hd-hero" class="relative h-64 flex items-end p-5 overflow-hidden bg-cover bg-center">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/10 z-10"></div>
+        <div class="absolute top-0 left-0 right-0 flex justify-between items-center p-4 z-20">
+          <button onclick="goTo('history')" class="w-10 h-10 rounded-full bg-white/85 backdrop-blur flex items-center justify-center active:scale-90 transition-transform">
+            <span class="material-symbols-outlined text-on-surface" style="font-size:20px;">arrow_back</span>
+          </button>
+          <div class="flex gap-2">
+            <button onclick="cookAgain()" class="w-10 h-10 rounded-full bg-white/85 backdrop-blur flex items-center justify-center active:scale-90 transition-transform" title="Cook again">
+              <span class="material-symbols-outlined text-on-surface" style="font-size:20px;">refresh</span>
+            </button>
+            <button onclick="deleteHistoryEntry()" class="w-10 h-10 rounded-full bg-white/85 backdrop-blur flex items-center justify-center active:scale-90 transition-transform">
+              <span class="material-symbols-outlined text-error" style="font-size:20px;">delete_outline</span>
+            </button>
+          </div>
+        </div>
+        <div id="hd-hero-content" class="relative z-10 text-white"></div>
+      </div>
+
+      <div class="px-6 pt-5 pb-32">
+        <!-- When made — timestamp card -->
+        <div class="bg-surface-container-low rounded-DEFAULT p-4 mb-5 flex items-center gap-3">
+          <div class="w-11 h-11 rounded-full bg-primary-container/40 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-primary" style="font-size:22px;">event</span>
+          </div>
+          <div class="flex-1">
+            <p class="text-[11px] text-secondary font-medium" data-i18n="madeon">烹饪日期</p>
+            <p class="font-bold font-headline text-[14px] text-on-surface" id="hd-date"></p>
+          </div>
+          <div class="text-right">
+            <p class="text-[10px] text-secondary font-bold uppercase tracking-wider" data-i18n="rating">评分</p>
+            <div id="hd-rating" class="flex gap-0.5 mt-0.5"></div>
+          </div>
+        </div>
+
+        <!-- Eco impact for this cook -->
+        <div class="eco-stripe rounded-DEFAULT p-4 mb-5 border border-eco-leaf/20">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="material-symbols-outlined text-eco-leaf-dim" style="font-size:20px;font-variation-settings:'FILL' 1;">eco</span>
+            <p class="font-bold font-headline text-[13px] text-eco-leaf-dim" data-i18n="ecothiscook">本次烹饪环保影响</p>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="bg-white/50 rounded-DEFAULT p-3">
+              <p class="text-[10px] text-eco-leaf-dim font-bold uppercase tracking-wider" data-i18n="wastesaved">挽救食材</p>
+              <p class="font-headline font-bold text-[18px] text-eco-leaf-dim" id="hd-waste">0g</p>
+            </div>
+            <div class="bg-white/50 rounded-DEFAULT p-3">
+              <p class="text-[10px] text-on-primary-container font-bold uppercase tracking-wider" data-i18n="moneysaved">节省金额</p>
+              <p class="font-headline font-bold text-[18px] text-on-primary-container" id="hd-money">RM 0.00</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats grid -->
+        <div class="grid grid-cols-3 gap-2 mb-5" id="hd-stats"></div>
+
+        <!-- Leftovers used -->
+        <h3 class="font-bold font-headline text-[15px] text-on-surface mb-3" data-i18n="leftoversused">使用的剩食</h3>
+        <div class="bg-surface-container-lowest rounded-DEFAULT p-4 mb-5">
+          <div class="flex flex-wrap gap-2" id="hd-leftovers"></div>
+        </div>
+
+        <!-- Photo if user took one -->
+        <div id="hd-userphoto-section" class="hidden mb-5">
+          <h3 class="font-bold font-headline text-[15px] text-on-surface mb-3" data-i18n="yourphoto">您拍摄的剩食</h3>
+          <div class="rounded-DEFAULT overflow-hidden bg-surface-container-low">
+            <img id="hd-userphoto" src="" alt="user leftovers photo" class="w-full object-cover" style="max-height:200px;"/>
+          </div>
+        </div>
+
+        <!-- Recipe steps recap -->
+        <h3 class="font-bold font-headline text-[15px] text-on-surface mb-3" data-i18n="recipeused">使用的菜谱</h3>
+        <ol class="space-y-3 mb-5" id="hd-steps"></ol>
+
+        <!-- User notes -->
+        <h3 class="font-bold font-headline text-[15px] text-on-surface mb-3" data-i18n="mynotes">我的笔记</h3>
+        <textarea id="hd-notes" rows="3" placeholder="" class="w-full p-3 bg-surface-container-low rounded-DEFAULT border-none text-[13px] text-on-surface focus:ring-2 focus:ring-primary-fixed transition-all resize-none mb-3" oninput="markNotesDirty()"></textarea>
+        <button onclick="saveNotes()" id="save-notes-btn" class="hidden w-full h-11 bg-primary text-on-primary rounded-full font-bold text-[13px] active:scale-95 transition-transform mb-5" data-i18n="savenotes">保存笔记</button>
+
+        <!-- Cook again CTA -->
+        <button onclick="cookAgain()" class="w-full h-12 bg-primary text-on-primary rounded-full font-headline font-bold text-[14px] active:scale-95 transition-transform flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined" style="font-size:20px;">restart_alt</span>
+          <span data-i18n="cookagain">再做一次</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- ═════════════════ SEARCH SCREEN ════════════════════════ -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-search">
+    <header class="bg-[#FFF6E9]/70 backdrop-blur-xl flex-shrink-0">
+      <div class="flex items-center gap-3 px-4 h-16">
+        <button onclick="goTo('home')" class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center active:scale-90 transition-transform flex-shrink-0">
+          <span class="material-symbols-outlined text-on-surface" style="font-size:20px;">arrow_back</span>
+        </button>
+        <div class="relative flex-1">
+          <span class="material-symbols-outlined text-secondary absolute left-3 top-1/2 -translate-y-1/2" style="font-size:18px;">search</span>
+          <input type="text" id="search-input" autofocus placeholder="搜食材、菜谱、剩菜..." data-i18n-placeholder="searchph" oninput="performSearch(this.value)" class="w-full h-10 pl-10 pr-9 bg-surface-container-high rounded-full border-none text-[14px] text-on-surface placeholder-on-surface-variant/60 focus:ring-2 focus:ring-primary-fixed focus:bg-surface-container-lowest transition-all"/>
+          <button id="search-clear" onclick="clearSearch()" class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center active:scale-90">
+            <span class="material-symbols-outlined text-secondary" style="font-size:14px;">close</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="scroll-area px-6 pt-2">
+      <!-- Empty state (default before typing) -->
+      <div id="search-empty">
+        <!-- Recent searches -->
+        <div id="recent-searches-section">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold font-headline text-[13px] text-secondary uppercase tracking-wider" data-i18n="recentsearches">最近搜索</h3>
+            <button onclick="clearRecentSearches()" class="text-[11px] text-primary font-bold" data-i18n="clearall">清除</button>
+          </div>
+          <div class="flex flex-wrap gap-2 mb-6" id="recent-searches-list"></div>
+        </div>
+
+        <!-- Trending / popular -->
+        <h3 class="font-bold font-headline text-[13px] text-secondary uppercase tracking-wider mb-3" data-i18n="popularsearch">热门搜索</h3>
+        <div class="flex flex-wrap gap-2 mb-6" id="popular-list"></div>
+
+        <!-- Quick categories -->
+        <h3 class="font-bold font-headline text-[13px] text-secondary uppercase tracking-wider mb-3" data-i18n="browsecategory">分类浏览</h3>
+        <div class="grid grid-cols-2 gap-3" id="search-categories"></div>
+      </div>
+
+      <!-- Results state -->
+      <div id="search-results" class="hidden">
+        <!-- "Recipes" group -->
+        <div id="results-recipes-section" class="mb-5">
+          <h3 class="font-bold font-headline text-[12px] text-secondary uppercase tracking-wider mb-2 flex items-center gap-2">
+            <span class="material-symbols-outlined" style="font-size:16px;">menu_book</span>
+            <span data-i18n="recipesgroup">菜谱</span>
+            <span id="results-recipes-count" class="bg-surface-container-high text-secondary text-[10px] font-bold px-2 py-0.5 rounded-full"></span>
+          </h3>
+          <div id="results-recipes-list" class="space-y-2"></div>
+        </div>
+
+        <!-- "Ingredients" group -->
+        <div id="results-ings-section" class="mb-5">
+          <h3 class="font-bold font-headline text-[12px] text-secondary uppercase tracking-wider mb-2 flex items-center gap-2">
+            <span class="material-symbols-outlined" style="font-size:16px;">grocery</span>
+            <span data-i18n="ingredientsgroup">食材</span>
+            <span id="results-ings-count" class="bg-surface-container-high text-secondary text-[10px] font-bold px-2 py-0.5 rounded-full"></span>
+          </h3>
+          <div id="results-ings-list" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- "History (leftovers)" group -->
+        <div id="results-history-section" class="mb-5">
+          <h3 class="font-bold font-headline text-[12px] text-secondary uppercase tracking-wider mb-2 flex items-center gap-2">
+            <span class="material-symbols-outlined" style="font-size:16px;">history</span>
+            <span data-i18n="historygroup">烹饪历史</span>
+            <span id="results-history-count" class="bg-surface-container-high text-secondary text-[10px] font-bold px-2 py-0.5 rounded-full"></span>
+          </h3>
+          <div id="results-history-list" class="space-y-2"></div>
+        </div>
+
+        <!-- No results -->
+        <div id="results-empty" class="hidden text-center py-12">
+          <div class="w-16 h-16 rounded-full bg-surface-container mx-auto mb-3 flex items-center justify-center">
+            <span class="material-symbols-outlined text-secondary" style="font-size:28px;">search_off</span>
+          </div>
+          <p class="font-bold font-headline text-[14px] text-on-surface mb-1" data-i18n="noresults">找不到结果</p>
+          <p class="text-[11px] text-secondary mb-4" data-i18n="noresultsdesc">试试不同的关键词或拍下您的剩食</p>
+          <button onclick="goTo('camera')" class="h-10 px-5 bg-primary text-on-primary rounded-full font-bold text-[12px] active:scale-95 transition-transform" data-i18n="snapinstead">拍下剩食</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const API = 'https://api.anthropic.com/v1/messages';
+let ingredients = [];
+let prefs = [];
+let timePref = '30 分钟';
+let recipes = [];
+let currentRecipe = null;
+let savedRecipes = JSON.parse(localStorage.getItem('ecobite_saved') || '[]');
+let uploadedImageB64 = null;
+let activeFilter = '全部';
+let currentLang = localStorage.getItem('ecobite_lang') || 'zh';
+
+/* ── USER PROFILE ── pulled from "login" / can be loaded from API after auth ── */
+const DEFAULT_PROFILE = {
+  zh: { name: '张妈妈', email: 'mama.zhang@example.com', since: '2024.03', avatar: 'w1' },
+  en: { name: 'Sarah', email: 'sarah.chen@example.com', since: 'Mar 2024', avatar: 'w1' }
+};
+let userProfile = JSON.parse(localStorage.getItem('ecobite_profile') || 'null') || DEFAULT_PROFILE[currentLang];
+
+/* Avatar options — 4 women + 4 men friendly portraits from Unsplash */
+const AVATAR_OPTIONS = [
+  { id: 'w1', gender: 'female', url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=160&h=160&q=80&auto=format&fit=crop&crop=faces' },
+  { id: 'w2', gender: 'female', url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=160&h=160&q=80&auto=format&fit=crop&crop=faces' },
+  { id: 'w3', gender: 'female', url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=160&h=160&q=80&auto=format&fit=crop&crop=faces' },
+  { id: 'w4', gender: 'female', url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=160&h=160&q=80&auto=format&fit=crop&crop=faces' },
+  { id: 'm1', gender: 'male', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&h=160&q=80&auto=format&fit=crop&crop=faces' },
+  { id: 'm2', gender: 'male', url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=160&h=160&q=80&auto=format&fit=crop&crop=faces' },
+  { id: 'm3', gender: 'male', url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=160&h=160&q=80&auto=format&fit=crop&crop=faces' },
+  { id: 'm4', gender: 'male', url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=160&h=160&q=80&auto=format&fit=crop&crop=faces' }
+];
+function avatarUrl(id) {
+  const a = AVATAR_OPTIONS.find(x => x.id === id);
+  return a ? a.url : AVATAR_OPTIONS[0].url;
+}
+
+/* Recipe photo lookup — keyword → real Unsplash food photo */
+const RECIPE_PHOTOS = {
+  // fried rice / 炒饭
+  '炒饭': 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&q=80&auto=format&fit=crop',
+  'fried rice': 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&q=80&auto=format&fit=crop',
+  // chicken curry / 咖喱鸡
+  '咖喱鸡': 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=600&q=80&auto=format&fit=crop',
+  'chicken curry': 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=600&q=80&auto=format&fit=crop',
+  'curry rice': 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=600&q=80&auto=format&fit=crop',
+  // black pepper beef / 黑椒牛
+  '黑椒牛': 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80&auto=format&fit=crop',
+  'black pepper beef': 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80&auto=format&fit=crop',
+  'beef': 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80&auto=format&fit=crop',
+  // salmon / 三文鱼
+  '三文鱼': 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80&auto=format&fit=crop',
+  'salmon': 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80&auto=format&fit=crop',
+  // mapo tofu / 麻婆豆腐
+  '麻婆': 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=600&q=80&auto=format&fit=crop',
+  'mapo': 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=600&q=80&auto=format&fit=crop',
+  '豆腐': 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=600&q=80&auto=format&fit=crop',
+  'tofu': 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=600&q=80&auto=format&fit=crop',
+  // garlic chili prawns / 辣椒虾
+  '辣椒虾': 'https://images.unsplash.com/photo-1633504581786-316c8002b1b9?w=600&q=80&auto=format&fit=crop',
+  '虾': 'https://images.unsplash.com/photo-1633504581786-316c8002b1b9?w=600&q=80&auto=format&fit=crop',
+  'prawn': 'https://images.unsplash.com/photo-1633504581786-316c8002b1b9?w=600&q=80&auto=format&fit=crop',
+  'shrimp': 'https://images.unsplash.com/photo-1633504581786-316c8002b1b9?w=600&q=80&auto=format&fit=crop',
+  // pork cabbage / 猪肉
+  '猪肉': 'https://images.unsplash.com/photo-1432139509613-5c4255815697?w=600&q=80&auto=format&fit=crop',
+  'pork': 'https://images.unsplash.com/photo-1432139509613-5c4255815697?w=600&q=80&auto=format&fit=crop',
+  // ── VEGETABLE DISHES ─────────────────
+  // sambal kangkung / 空心菜
+  '空心菜': 'https://images.unsplash.com/photo-1635237097796-2f1f25401d27?w=600&q=80&auto=format&fit=crop',
+  'kangkung': 'https://images.unsplash.com/photo-1635237097796-2f1f25401d27?w=600&q=80&auto=format&fit=crop',
+  'sambal': 'https://images.unsplash.com/photo-1635237097796-2f1f25401d27?w=600&q=80&auto=format&fit=crop',
+  // bok choy / 小白菜
+  '小白菜': 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=600&q=80&auto=format&fit=crop',
+  'bok choy': 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=600&q=80&auto=format&fit=crop',
+  // eggplant / 茄子
+  '茄子': 'https://images.unsplash.com/photo-1659261200833-ec8761558af7?w=600&q=80&auto=format&fit=crop',
+  'eggplant': 'https://images.unsplash.com/photo-1659261200833-ec8761558af7?w=600&q=80&auto=format&fit=crop',
+  '鱼香': 'https://images.unsplash.com/photo-1659261200833-ec8761558af7?w=600&q=80&auto=format&fit=crop',
+  // broccoli / 西兰花
+  '西兰花': 'https://images.unsplash.com/photo-1583663848850-46af132dc08e?w=600&q=80&auto=format&fit=crop',
+  'broccoli': 'https://images.unsplash.com/photo-1583663848850-46af132dc08e?w=600&q=80&auto=format&fit=crop',
+  // bean sprouts / 豆芽
+  '豆芽': 'https://images.unsplash.com/photo-1607301405390-d831c242f59b?w=600&q=80&auto=format&fit=crop',
+  'bean sprout': 'https://images.unsplash.com/photo-1607301405390-d831c242f59b?w=600&q=80&auto=format&fit=crop',
+  '韭菜': 'https://images.unsplash.com/photo-1607301405390-d831c242f59b?w=600&q=80&auto=format&fit=crop',
+  // cabbage / 白菜
+  '白菜': 'https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=600&q=80&auto=format&fit=crop',
+  'cabbage': 'https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=600&q=80&auto=format&fit=crop',
+  // vegetable soup / 蔬菜浓汤
+  '蔬菜': 'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80&auto=format&fit=crop',
+  'vegetable soup': 'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80&auto=format&fit=crop',
+  'garden': 'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80&auto=format&fit=crop',
+  // bitter gourd / 苦瓜
+  '苦瓜': 'https://images.unsplash.com/photo-1604908554027-444e74dc91d3?w=600&q=80&auto=format&fit=crop',
+  'bitter gourd': 'https://images.unsplash.com/photo-1604908554027-444e74dc91d3?w=600&q=80&auto=format&fit=crop',
+  // chicken sesame / 凉面
+  '凉面': 'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=600&q=80&auto=format&fit=crop',
+  'sesame noodle': 'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=600&q=80&auto=format&fit=crop',
+  '鸡丝': 'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=600&q=80&auto=format&fit=crop',
+  // generic chicken
+  '鸡': 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=600&q=80&auto=format&fit=crop',
+  'chicken': 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=600&q=80&auto=format&fit=crop',
+  // stir fry / 炒
+  '炒': 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=80&auto=format&fit=crop',
+  'stir fry': 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=80&auto=format&fit=crop',
+  // soup / 汤
+  '汤': 'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80&auto=format&fit=crop',
+  'soup': 'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80&auto=format&fit=crop',
+  // omelette / wrap / 蛋饼
+  '蛋饼': 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&q=80&auto=format&fit=crop',
+  'omelette': 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&q=80&auto=format&fit=crop',
+  'wrap': 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&q=80&auto=format&fit=crop',
+  // salad / 沙拉
+  '沙拉': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80&auto=format&fit=crop',
+  'salad': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80&auto=format&fit=crop',
+  // pasta / 意面
+  '意面': 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=600&q=80&auto=format&fit=crop',
+  'pasta': 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=600&q=80&auto=format&fit=crop',
+  // pizza / 披萨
+  '披萨': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80&auto=format&fit=crop',
+  'pizza': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80&auto=format&fit=crop',
+  // noodles / 面
+  '面': 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80&auto=format&fit=crop',
+  'noodle': 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80&auto=format&fit=crop',
+  // sandwich / 三明治
+  '三明治': 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80&auto=format&fit=crop',
+  'sandwich': 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&q=80&auto=format&fit=crop',
+  // dumpling / 饺子
+  '饺子': 'https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=600&q=80&auto=format&fit=crop',
+  'dumpling': 'https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=600&q=80&auto=format&fit=crop',
+  // toast / 吐司
+  '吐司': 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80&auto=format&fit=crop',
+  'toast': 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80&auto=format&fit=crop',
+  // rice bowl / 饭
+  '饭': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80&auto=format&fit=crop',
+  'rice': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80&auto=format&fit=crop',
+  'bowl': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80&auto=format&fit=crop',
+  // curry / 咖喱
+  '咖喱': 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80&auto=format&fit=crop',
+  'curry': 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80&auto=format&fit=crop'
+};
+const FALLBACK_PHOTO_BY_CAT = {
+  '中式': 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600&q=80&auto=format&fit=crop',
+  'Chinese': 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600&q=80&auto=format&fit=crop',
+  '西式': 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&q=80&auto=format&fit=crop',
+  'Western': 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&q=80&auto=format&fit=crop',
+  '汤品': 'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80&auto=format&fit=crop',
+  'Soup': 'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80&auto=format&fit=crop',
+  '沙拉': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80&auto=format&fit=crop',
+  'Salad': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80&auto=format&fit=crop',
+  '融合': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80&auto=format&fit=crop',
+  'Fusion': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80&auto=format&fit=crop',
+  '马来式': 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80&auto=format&fit=crop',
+  'Malaysian': 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80&auto=format&fit=crop'
+};
+function recipePhoto(r) {
+  if (r.photo) return r.photo;
+  const name = (r.name || '').toLowerCase();
+  for (const key in RECIPE_PHOTOS) {
+    if (name.includes(key.toLowerCase())) return RECIPE_PHOTOS[key];
+  }
+  return FALLBACK_PHOTO_BY_CAT[r.category] || FALLBACK_PHOTO_BY_CAT['中式'];
+}
+
+/* ── COOKING HISTORY ─────────────────────────────────
+   Each entry: { id, recipe (full obj), leftoversUsed [], ts (Date.toISOString),
+                 wasteSavedG, moneySavedRM (Ringgit Malaysia),
+                 rating (1-5), notes, userPhoto, isFavorite } */
+const today = new Date();
+const ms = (n) => 1000*60*60*24*n;
+const seedHistory = [
+  { id: 'h1', ts: new Date(today.getTime() - ms(0)).toISOString(), rating: 5, isFavorite: true, notes: '', wasteSavedG: 450, moneySavedRM: 8.50,
+    leftoversUsed: ['米饭','鸡蛋','胡萝卜','洋葱','大蒜'],
+    leftoversUsedEn: ['rice','eggs','carrots','onion','garlic'],
+    recipe: { name: '蔬菜蛋炒饭', nameEn: 'Veggie fried rice', category: '中式', categoryEn: 'Chinese', time: '20 分钟', timeEn: '20 min',
+      servings: 2, kcal: 320, difficulty: '初级', difficultyEn: 'Easy', match: 92, needs: [],
+      steps: ['热锅下油，蒜末爆香，加洋葱炒至透明。','加入切丁胡萝卜翻炒 3 分钟。','倒入米饭翻炒均匀，推到锅边。','空出位置打入鸡蛋，炒散后与米饭混匀。','加少许盐和酱油调味，撒葱花起锅。'],
+      stepsEn: ['Heat oil, sauté garlic and onion until golden.','Add diced carrots and stir-fry for 3 minutes.','Add cooked rice, mix well, push to one side.','Crack eggs in the empty space, scramble, then mix with rice.','Season with salt and soy sauce, top with scallions.']
+    } },
+  { id: 'h2', ts: new Date(today.getTime() - ms(1)).toISOString(), rating: 4, isFavorite: false, notes: '', wasteSavedG: 540, moneySavedRM: 10.20,
+    leftoversUsed: ['胡萝卜','洋葱','大蒜'],
+    leftoversUsedEn: ['carrots','onion','garlic'],
+    recipe: { name: '胡萝卜浓汤', nameEn: 'Carrot ginger soup', category: '汤品', categoryEn: 'Soup', time: '30 分钟', timeEn: '30 min',
+      servings: 4, kcal: 180, difficulty: '初级', difficultyEn: 'Easy', match: 76, needs: ['生姜','蔬菜高汤'],
+      steps: ['黄油融化，洋葱蒜末小火炒 5 分钟。','加入切块胡萝卜和姜片续炒 3 分钟。','倒入高汤煮沸后转小火 20 分钟。','用搅拌棒打成顺滑浓汤。','调味，淋少许奶油装饰。'],
+      stepsEn: ['Melt butter, sauté onion and garlic for 5 min.','Add chopped carrots and ginger, cook 3 min.','Pour in broth, bring to boil, simmer 20 min.','Blend until smooth.','Season and serve with a swirl of cream.']
+    } },
+  { id: 'h3', ts: new Date(today.getTime() - ms(3)).toISOString(), rating: 5, isFavorite: true, notes: '',
+    wasteSavedG: 380, moneySavedRM: 7.80,
+    leftoversUsed: ['鸡蛋','洋葱','胡萝卜'],
+    leftoversUsedEn: ['eggs','onion','carrots'],
+    recipe: { name: '鸡蛋蔬菜炒', nameEn: 'Egg & veg stir fry', category: '中式', categoryEn: 'Chinese', time: '15 分钟', timeEn: '15 min',
+      servings: 2, kcal: 280, difficulty: '初级', difficultyEn: 'Easy', match: 85, needs: ['酱油'],
+      steps: ['鸡蛋打散加少许盐。','热锅下油爆香蒜末。','加入蔬菜大火翻炒 4 分钟。','倒入蛋液炒至金黄。','加酱油翻匀出锅。'],
+      stepsEn: ['Beat eggs with a pinch of salt.','Heat oil in a wok and fry garlic.','Add vegetables and stir-fry for 4 minutes.','Pour in eggs and cook until golden.','Add soy sauce and toss to combine.']
+    } },
+  { id: 'h4', ts: new Date(today.getTime() - ms(5)).toISOString(), rating: 4, isFavorite: false, notes: '',
+    wasteSavedG: 320, moneySavedRM: 6.50,
+    leftoversUsed: ['鸡蛋','洋葱','胡萝卜'],
+    leftoversUsedEn: ['eggs','onion','carrots'],
+    recipe: { name: '法式蛋饼卷', nameEn: 'Veggie omelette wrap', category: '西式', categoryEn: 'Western', time: '10 分钟', timeEn: '10 min',
+      servings: 1, kcal: 350, difficulty: '初级', difficultyEn: 'Easy', match: 80, needs: ['墨西哥饼'],
+      steps: ['3 个鸡蛋打散，加盐胡椒。','倒入热油的平底锅。','撒上切丁的蔬菜在蛋液上。','蛋液凝固后轻轻折叠。','滑到温热的饼上卷起。'],
+      stepsEn: ['Beat 3 eggs with salt and pepper.','Pour into a hot oiled pan.','Sprinkle diced veggies on top.','Once set, fold gently.','Slide onto a warm tortilla and roll.']
+    } },
+  { id: 'h5', ts: new Date(today.getTime() - ms(8)).toISOString(), rating: 3, isFavorite: false, notes: '',
+    wasteSavedG: 600, moneySavedRM: 12.30,
+    leftoversUsed: ['面条','洋葱','大蒜','番茄'],
+    leftoversUsedEn: ['noodles','onion','garlic','tomato'],
+    recipe: { name: '番茄鸡蛋面', nameEn: 'Tomato egg noodles', category: '中式', categoryEn: 'Chinese', time: '15 分钟', timeEn: '15 min',
+      servings: 2, kcal: 380, difficulty: '初级', difficultyEn: 'Easy', match: 88, needs: [],
+      steps: ['番茄切块，洋葱切丝。','热油爆香蒜末，加洋葱炒软。','加入番茄炒出汁。','倒入热水煮沸，下面条。','打入鸡蛋花，调味出锅。'],
+      stepsEn: ['Chop tomato and slice onion.','Sauté garlic, add onion until soft.','Add tomato and cook until juicy.','Pour boiling water, add noodles.','Drop in beaten egg, season and serve.']
+    } },
+
+  /* ── PROTEIN-FOCUSED HISTORICAL RECIPES ── */
+  { id: 'p1', ts: new Date(today.getTime() - ms(2)).toISOString(), rating: 5, isFavorite: true, notes: '',
+    wasteSavedG: 520, moneySavedRM: 14.80,
+    leftoversUsed: ['鸡肉','米饭','洋葱','大蒜'],
+    leftoversUsedEn: ['chicken','rice','onion','garlic'],
+    recipe: { name: '咖喱鸡饭', nameEn: 'Chicken curry rice', category: '马来式', categoryEn: 'Malaysian', time: '35 分钟', timeEn: '35 min',
+      servings: 3, kcal: 520, difficulty: '中级', difficultyEn: 'Medium', match: 82, needs: ['咖喱粉','椰浆'],
+      steps: ['鸡肉切块用盐和胡椒腌制 10 分钟。','热锅下油，爆香蒜末和洋葱。','加入咖喱粉炒出香味。','下鸡肉翻炒至变色。','倒入椰浆煮沸，转小火炖 20 分钟。','配米饭享用。'],
+      stepsEn: ['Cube chicken, marinate with salt and pepper for 10 min.','Heat oil, sauté garlic and onion.','Add curry powder and stir until fragrant.','Add chicken, cook until colored.','Pour coconut milk, simmer for 20 min.','Serve with rice.']
+    } },
+
+  { id: 'p2', ts: new Date(today.getTime() - ms(4)).toISOString(), rating: 4, isFavorite: false, notes: '',
+    wasteSavedG: 480, moneySavedRM: 18.50,
+    leftoversUsed: ['牛肉','洋葱','青椒','大蒜'],
+    leftoversUsedEn: ['beef','onion','pepper','garlic'],
+    recipe: { name: '黑椒牛柳', nameEn: 'Black pepper beef', category: '中式', categoryEn: 'Chinese', time: '20 分钟', timeEn: '20 min',
+      servings: 2, kcal: 420, difficulty: '中级', difficultyEn: 'Medium', match: 90, needs: ['黑胡椒','蚝油'],
+      steps: ['牛肉切条，用酱油和淀粉腌制 15 分钟。','热锅下油，大火炒牛肉至 7 分熟，盛出。','留底油爆香蒜末，下洋葱青椒。','倒回牛肉，加黑胡椒和蚝油翻炒。','收汁后立即出锅。'],
+      stepsEn: ['Slice beef, marinate with soy sauce and starch for 15 min.','Heat oil, stir-fry beef until 70% done, set aside.','Sauté garlic in remaining oil, add onion and pepper.','Return beef, add black pepper and oyster sauce.','Toss until sauce reduces, serve immediately.']
+    } },
+
+  { id: 'p3', ts: new Date(today.getTime() - ms(6)).toISOString(), rating: 5, isFavorite: true, notes: '',
+    wasteSavedG: 410, moneySavedRM: 22.40,
+    leftoversUsed: ['三文鱼','柠檬','大蒜','洋葱'],
+    leftoversUsedEn: ['salmon','lemon','garlic','onion'],
+    recipe: { name: '柠香煎三文鱼', nameEn: 'Lemon herb salmon', category: '西式', categoryEn: 'Western', time: '15 分钟', timeEn: '15 min',
+      servings: 2, kcal: 380, difficulty: '初级', difficultyEn: 'Easy', match: 88, needs: ['黄油','香草'],
+      steps: ['三文鱼用盐和胡椒调味。','热锅融化黄油，皮朝下煎 4 分钟。','翻面续煎 3 分钟。','加入蒜末和柠檬汁。','撒上新鲜香草，淋黄油起锅。'],
+      stepsEn: ['Season salmon with salt and pepper.','Melt butter in pan, cook skin-side down 4 min.','Flip and cook 3 more min.','Add minced garlic and lemon juice.','Top with fresh herbs, baste with butter.']
+    } },
+
+  { id: 'p4', ts: new Date(today.getTime() - ms(10)).toISOString(), rating: 4, isFavorite: false, notes: '',
+    wasteSavedG: 350, moneySavedRM: 6.80,
+    leftoversUsed: ['豆腐','青葱','大蒜','胡萝卜'],
+    leftoversUsedEn: ['tofu','scallions','garlic','carrots'],
+    recipe: { name: '麻婆豆腐', nameEn: 'Mapo tofu', category: '中式', categoryEn: 'Chinese', time: '20 分钟', timeEn: '20 min',
+      servings: 3, kcal: 290, difficulty: '中级', difficultyEn: 'Medium', match: 85, needs: ['豆瓣酱','花椒'],
+      steps: ['豆腐切块，盐水焯 1 分钟捞出。','热锅下油，爆香蒜末和豆瓣酱。','加入肉末（可选）炒散。','倒入豆腐和少量水煮 5 分钟。','撒花椒粉和青葱出锅。'],
+      stepsEn: ['Cube tofu, blanch in salted water 1 min.','Heat oil, sauté garlic and bean paste.','Add ground meat (optional), break apart.','Add tofu and water, simmer 5 min.','Sprinkle Sichuan pepper and scallions.']
+    } },
+
+  { id: 'p5', ts: new Date(today.getTime() - ms(13)).toISOString(), rating: 5, isFavorite: true, notes: '',
+    wasteSavedG: 460, moneySavedRM: 19.60,
+    leftoversUsed: ['虾','大蒜','辣椒','米饭'],
+    leftoversUsedEn: ['shrimp','garlic','chili','rice'],
+    recipe: { name: '蒜蓉辣椒虾', nameEn: 'Garlic chili prawns', category: '马来式', categoryEn: 'Malaysian', time: '15 分钟', timeEn: '15 min',
+      servings: 2, kcal: 310, difficulty: '初级', difficultyEn: 'Easy', match: 92, needs: ['蚝油'],
+      steps: ['虾去壳留尾，挑去虾线。','热锅下油，爆香蒜末和辣椒。','下虾大火翻炒 2 分钟。','加蚝油和少许糖调味。','炒至虾变红卷曲即可。'],
+      stepsEn: ['Peel prawns, leaving tails on; devein.','Heat oil, sauté garlic and chili.','Add prawns, stir-fry on high 2 min.','Season with oyster sauce and a pinch of sugar.','Cook until prawns curl and turn red.']
+    } },
+
+  { id: 'p6', ts: new Date(today.getTime() - ms(18)).toISOString(), rating: 3, isFavorite: false, notes: '',
+    wasteSavedG: 380, moneySavedRM: 11.20,
+    leftoversUsed: ['猪肉','白菜','大蒜','姜'],
+    leftoversUsedEn: ['pork','cabbage','garlic','ginger'],
+    recipe: { name: '猪肉白菜炒', nameEn: 'Pork cabbage stir-fry', category: '中式', categoryEn: 'Chinese', time: '18 分钟', timeEn: '18 min',
+      servings: 2, kcal: 340, difficulty: '初级', difficultyEn: 'Easy', match: 80, needs: ['酱油'],
+      steps: ['猪肉切片用酱油腌制 5 分钟。','白菜洗净撕成小块。','热锅下油，爆香姜蒜。','下猪肉炒至变色。','加入白菜大火翻炒 3 分钟。','调味出锅。'],
+      stepsEn: ['Slice pork, marinate with soy sauce 5 min.','Wash and tear cabbage into pieces.','Heat oil, sauté ginger and garlic.','Add pork, stir-fry until colored.','Add cabbage, toss on high heat 3 min.','Season and serve.']
+    } },
+
+  { id: 'p7', ts: new Date(today.getTime() - ms(22)).toISOString(), rating: 4, isFavorite: false, notes: '',
+    wasteSavedG: 420, moneySavedRM: 13.50,
+    leftoversUsed: ['鸡肉','面条','洋葱','胡萝卜'],
+    leftoversUsedEn: ['chicken','noodles','onion','carrots'],
+    recipe: { name: '鸡丝凉面', nameEn: 'Chicken sesame noodles', category: '中式', categoryEn: 'Chinese', time: '25 分钟', timeEn: '25 min',
+      servings: 2, kcal: 450, difficulty: '初级', difficultyEn: 'Easy', match: 86, needs: ['芝麻酱','酱油'],
+      steps: ['鸡胸肉煮熟撕成丝。','面条煮熟过冷水沥干。','胡萝卜切丝，洋葱切薄片。','芝麻酱加酱油和水调匀。','所有食材拌匀，淋酱汁。'],
+      stepsEn: ['Boil chicken breast, shred when cool.','Cook noodles, rinse with cold water.','Julienne carrots, slice onion thin.','Mix sesame paste with soy sauce and water.','Toss everything together with sauce.']
+    } },
+
+  /* ── VEGETABLE-FOCUSED HISTORICAL RECIPES ── */
+  { id: 'v1', ts: new Date(today.getTime() - ms(1)).toISOString(), rating: 5, isFavorite: true, notes: '',
+    wasteSavedG: 320, moneySavedRM: 4.80,
+    leftoversUsed: ['空心菜','大蒜','辣椒'],
+    leftoversUsedEn: ['kangkung','garlic','chili'],
+    recipe: { name: '马来风味空心菜', nameEn: 'Sambal kangkung', category: '马来式', categoryEn: 'Malaysian', time: '12 分钟', timeEn: '12 min',
+      servings: 3, kcal: 95, difficulty: '初级', difficultyEn: 'Easy', match: 95, needs: ['参巴酱','虾酱'],
+      steps: ['空心菜洗净切段。','大蒜和辣椒切末。','热锅下油，爆香蒜末和参巴酱。','下空心菜大火快炒 2 分钟。','加少许虾酱和糖调味，立即出锅。'],
+      stepsEn: ['Wash and cut kangkung into segments.','Mince garlic and chili.','Heat oil, sauté garlic and sambal paste.','Add kangkung, toss on high heat 2 min.','Season with shrimp paste and a pinch of sugar.']
+    } },
+
+  { id: 'v2', ts: new Date(today.getTime() - ms(3)).toISOString(), rating: 4, isFavorite: false, notes: '',
+    wasteSavedG: 280, moneySavedRM: 3.50,
+    leftoversUsed: ['小白菜','大蒜','姜'],
+    leftoversUsedEn: ['bok choy','garlic','ginger'],
+    recipe: { name: '蒜蓉小白菜', nameEn: 'Garlic bok choy', category: '中式', categoryEn: 'Chinese', time: '8 分钟', timeEn: '8 min',
+      servings: 2, kcal: 60, difficulty: '初级', difficultyEn: 'Easy', match: 96, needs: [],
+      steps: ['小白菜洗净，根部切十字。','热锅下油，姜蒜爆香。','下小白菜大火翻炒 1 分钟。','加少许水盖锅闷 30 秒。','开盖翻炒，加盐调味出锅。'],
+      stepsEn: ['Wash bok choy, score the base.','Heat oil, sauté ginger and garlic.','Add bok choy on high heat 1 min.','Add splash of water, cover 30 sec.','Uncover, season with salt and serve.']
+    } },
+
+  { id: 'v3', ts: new Date(today.getTime() - ms(5)).toISOString(), rating: 5, isFavorite: true, notes: '',
+    wasteSavedG: 380, moneySavedRM: 5.20,
+    leftoversUsed: ['茄子','大蒜','青葱','辣椒'],
+    leftoversUsedEn: ['eggplant','garlic','scallion','chili'],
+    recipe: { name: '鱼香茄子', nameEn: 'Yu xiang eggplant', category: '中式', categoryEn: 'Chinese', time: '20 分钟', timeEn: '20 min',
+      servings: 3, kcal: 220, difficulty: '中级', difficultyEn: 'Medium', match: 88, needs: ['豆瓣酱','醋'],
+      steps: ['茄子切条，撒盐静置 10 分钟。','挤干水分，热油炸至金黄。','另起锅爆香蒜辣椒和豆瓣酱。','调入糖醋酱油汁。','下茄子翻炒收汁，撒葱花。'],
+      stepsEn: ['Cut eggplant, salt and rest 10 min.','Squeeze dry, deep-fry until golden.','Sauté garlic, chili, and bean paste.','Mix in sweet-sour-soy sauce.','Toss eggplant in, garnish with scallions.']
+    } },
+
+  { id: 'v4', ts: new Date(today.getTime() - ms(7)).toISOString(), rating: 4, isFavorite: false, notes: '',
+    wasteSavedG: 410, moneySavedRM: 6.40,
+    leftoversUsed: ['西兰花','蘑菇','大蒜','姜'],
+    leftoversUsedEn: ['broccoli','mushroom','garlic','ginger'],
+    recipe: { name: '蚝油双菇西兰花', nameEn: 'Broccoli mushroom stir-fry', category: '中式', categoryEn: 'Chinese', time: '15 分钟', timeEn: '15 min',
+      servings: 3, kcal: 140, difficulty: '初级', difficultyEn: 'Easy', match: 90, needs: ['蚝油'],
+      steps: ['西兰花切小朵，焯水沥干。','蘑菇切片。','热锅下油，爆香姜蒜。','下蘑菇炒至出香味。','加西兰花和蚝油翻炒均匀。'],
+      stepsEn: ['Cut broccoli into florets, blanch and drain.','Slice mushrooms.','Heat oil, sauté ginger and garlic.','Add mushrooms until fragrant.','Add broccoli and oyster sauce, toss to coat.']
+    } },
+
+  { id: 'v5', ts: new Date(today.getTime() - ms(9)).toISOString(), rating: 5, isFavorite: true, notes: '',
+    wasteSavedG: 350, moneySavedRM: 4.20,
+    leftoversUsed: ['豆芽','韭菜','大蒜','胡萝卜'],
+    leftoversUsedEn: ['bean sprouts','chives','garlic','carrots'],
+    recipe: { name: '豆芽炒韭菜', nameEn: 'Bean sprout chive stir-fry', category: '中式', categoryEn: 'Chinese', time: '10 分钟', timeEn: '10 min',
+      servings: 2, kcal: 110, difficulty: '初级', difficultyEn: 'Easy', match: 92, needs: [],
+      steps: ['豆芽洗净沥干水。','韭菜切寸段，胡萝卜切丝。','热锅下油，蒜末爆香。','大火下豆芽和胡萝卜炒 1 分钟。','加韭菜翻炒 30 秒，调味出锅。'],
+      stepsEn: ['Rinse and drain bean sprouts.','Cut chives into segments, julienne carrots.','Heat oil, sauté garlic.','High heat: add sprouts and carrots, 1 min.','Add chives, toss 30 sec, season and serve.']
+    } },
+
+  { id: 'v6', ts: new Date(today.getTime() - ms(11)).toISOString(), rating: 3, isFavorite: false, notes: '',
+    wasteSavedG: 420, moneySavedRM: 5.80,
+    leftoversUsed: ['白菜','胡萝卜','洋葱','大蒜'],
+    leftoversUsedEn: ['cabbage','carrots','onion','garlic'],
+    recipe: { name: '醋溜白菜', nameEn: 'Sweet-sour cabbage', category: '中式', categoryEn: 'Chinese', time: '12 分钟', timeEn: '12 min',
+      servings: 4, kcal: 90, difficulty: '初级', difficultyEn: 'Easy', match: 88, needs: ['醋','糖'],
+      steps: ['白菜帮切片，菜叶撕大块。','胡萝卜切片，蒜切末。','热锅下油，爆香蒜末。','先下白菜帮和胡萝卜炒软。','加菜叶，糖醋酱油汁翻炒收汁。'],
+      stepsEn: ['Slice cabbage stems, tear leaves.','Slice carrots, mince garlic.','Heat oil, sauté garlic.','Stir-fry stems and carrots until soft.','Add leaves and sweet-sour-soy sauce, toss.']
+    } },
+
+  { id: 'v7', ts: new Date(today.getTime() - ms(15)).toISOString(), rating: 5, isFavorite: true, notes: '',
+    wasteSavedG: 460, moneySavedRM: 7.20,
+    leftoversUsed: ['玉米','胡萝卜','土豆','洋葱'],
+    leftoversUsedEn: ['corn','carrots','potato','onion'],
+    recipe: { name: '蔬菜浓汤', nameEn: 'Garden vegetable soup', category: '汤品', categoryEn: 'Soup', time: '40 分钟', timeEn: '40 min',
+      servings: 4, kcal: 180, difficulty: '初级', difficultyEn: 'Easy', match: 85, needs: ['蔬菜高汤'],
+      steps: ['所有蔬菜切丁。','热锅下黄油，洋葱炒至透明。','加入土豆和胡萝卜炒 3 分钟。','倒入高汤煮沸后小火 25 分钟。','加玉米粒续煮 5 分钟，调味。'],
+      stepsEn: ['Dice all vegetables.','Melt butter, sauté onion until translucent.','Add potato and carrots, cook 3 min.','Pour broth, simmer for 25 min.','Add corn, simmer 5 more min, season.']
+    } },
+
+  { id: 'v8', ts: new Date(today.getTime() - ms(20)).toISOString(), rating: 4, isFavorite: false, notes: '',
+    wasteSavedG: 290, moneySavedRM: 4.50,
+    leftoversUsed: ['苦瓜','鸡蛋','大蒜','洋葱'],
+    leftoversUsedEn: ['bitter gourd','eggs','garlic','onion'],
+    recipe: { name: '苦瓜炒蛋', nameEn: 'Bitter gourd omelette', category: '中式', categoryEn: 'Chinese', time: '15 分钟', timeEn: '15 min',
+      servings: 2, kcal: 220, difficulty: '初级', difficultyEn: 'Easy', match: 84, needs: [],
+      steps: ['苦瓜对半切去瓤，切薄片。','撒盐腌 5 分钟去苦水。','鸡蛋打散加少许盐。','热锅下油，蒜末爆香，下苦瓜炒软。','倒入蛋液，炒至凝固出锅。'],
+      stepsEn: ['Halve bitter gourd, scoop seeds, slice thin.','Salt for 5 min to draw out bitterness.','Beat eggs with salt.','Sauté garlic, add bitter gourd until soft.','Pour eggs, scramble until set, serve.']
+    } }
+];
+let cookHistory = JSON.parse(localStorage.getItem('ecobite_history_v3') || 'null') || seedHistory;
+let currentHistoryEntry = null;
+let currentHistoryFilter = 'all';
+let notesDirty = false;
+
+function localizedHistoryEntry(h) {
+  /* return name/category/time/etc in current language */
+  const r = h.recipe;
+  const isEn = currentLang === 'en';
+  return {
+    name: isEn ? (r.nameEn || r.name) : r.name,
+    category: isEn ? (r.categoryEn || r.category) : r.category,
+    time: isEn ? (r.timeEn || r.time) : r.time,
+    difficulty: isEn ? (r.difficultyEn || r.difficulty) : r.difficulty,
+    steps: isEn ? (r.stepsEn || r.steps) : r.steps,
+    leftovers: isEn ? (h.leftoversUsedEn || h.leftoversUsed) : h.leftoversUsed
+  };
+}
+
+function formatDateLabel(iso) {
+  const d = new Date(iso);
+  const now = new Date();
+  const diffMs = now - d;
+  const diffDays = Math.floor(diffMs / ms(1));
+  if (diffDays === 0) return t('today');
+  if (diffDays === 1) return t('yesterday');
+  if (diffDays < 7) return t('thisweek');
+  return t('earlier');
+}
+
+function formatExactDate(iso) {
+  const d = new Date(iso);
+  if (currentLang === 'zh') {
+    return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  }
+  return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) + ' · ' + d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
+}
+
+function moneyStr(rm) {
+  /* Always RM (Ringgit Malaysia) — display as RM 8.50 */
+  return 'RM ' + (Number(rm) || 0).toFixed(2);
+}
+
+/* ── WEEKLY SAVINGS CALCULATOR ──────────────────────
+   Returns sum of moneySavedRM and wasteSavedG for the past 7 days (rolling) */
+function calculateWeeklySavings() {
+  const now = new Date();
+  const cutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const weekEntries = cookHistory.filter(h => new Date(h.ts) >= cutoff);
+  const totalRM = weekEntries.reduce((s, h) => s + (h.moneySavedRM || 0), 0);
+  const totalWasteG = weekEntries.reduce((s, h) => s + (h.wasteSavedG || 0), 0);
+  return {
+    money: totalRM,
+    wasteKg: totalWasteG / 1000,
+    cookCount: weekEntries.length,
+    moneyFormatted: moneyStr(totalRM),
+    wasteFormatted: (totalWasteG / 1000).toFixed(2) + ' kg'
+  };
+}
+
+/* Update the home weekly eco-stripe with live values */
+function updateHomeWeekly() {
+  const w = calculateWeeklySavings();
+  const wasteEl = document.getElementById('home-eco-waste');
+  const moneyEl = document.getElementById('home-eco-money');
+  const countEl = document.getElementById('home-eco-count');
+  if (wasteEl) wasteEl.textContent = w.wasteFormatted;
+  if (moneyEl) moneyEl.textContent = w.moneyFormatted;
+  if (countEl) countEl.textContent = w.cookCount;
+}
+
+const I18N = {
+  zh: {
+    greeting: '早安，张妈妈 👋',
+    hometitle: '今天的剩食<br/>能变成什么？',
+    searchph: '搜食材、菜谱、剩菜...',
+    aibadge: 'AI 视觉识别',
+    herotitle: '拍下剩食 一键变美味',
+    herodesc: '对准盘中剩菜，AI 为您搭配新菜谱，零浪费。',
+    snapnow: '开始拍照',
+    herosub: '→ 找新菜谱',
+    mycookbook: '我的菜谱',
+    mycookbook2: '我的菜谱',
+    cookbookcount: '已收藏 12 道',
+    shopping: '购物清单',
+    shoppingcount: '3 项待补充',
+    ecoweek: '本周环保贡献',
+    saved: '挽救',
+    savedmoney: '节省',
+    moneysavedweek: '本周节省',
+    foodsavedweek: '挽救食材',
+    viewdetails: '查看详情 →',
+    cooksthisweek: '次烹饪 · 本周',
+    recentmade: '最近做过',
+    more: '更多 ›',
+    recipe1: '蔬菜蛋炒饭',
+    recipe1sub: '用了 5 种剩食 · 20 分钟',
+    recipe2: '胡萝卜浓汤',
+    recipe2sub: '昨天 · 30 分钟',
+    match92: '92% 匹配',
+    match76: '76% 匹配',
+    navhome: '首页', navsnap: '拍照', navrecipes: '菜谱', navme: '我的',
+    snaptitle: '拍下剩食',
+    skip: '跳过',
+    snapcta: '点击拍照或选择图片',
+    snapdesc: '让 AI 识别您的剩菜剩饭<br/>智能搭配出新菜谱',
+    analyzing: 'AI 正在识别食材...',
+    pleasewait: '请稍候',
+    identify: '识别食材 →',
+    phototip: '拍照小贴士',
+    phototipdesc: '将食材分散摆放在浅色盘子上，<br/>光线充足时识别更准确。',
+    yourings: '您的食材',
+    aidetected: '<span class="font-bold">AI 已识别</span> · 点击删除错误项',
+    inglist: '食材清单',
+    addingph: '补充其他食材...',
+    add: '添加',
+    dietpref: '饮食偏好',
+    vegetarian: '素食', vegan: '纯素', glutenfree: '无麸质', lowfat: '低脂', mildspice: '少辣',
+    cooktime: '理想烹饪时间',
+    time15: '15 分钟', quick: '快手菜',
+    time30: '30 分钟', everyday: '家常',
+    anytime: '不限', slowcook: '慢炖',
+    findrecipes: 'AI 推荐菜谱',
+    recapture: '重新拍照',
+    retake: '重新拍照',
+    photoready: '照片已就绪',
+    photoremoved: '照片已移除',
+    nophoto: '请先选择照片',
+    nofooddetected: '未识别到食材，请手动添加',
+    detectionfailed: '识别失败，使用默认食材',
+    detected: '识别到',
+    recipestitle: '为你推荐',
+    basedon_prefix: '基于 ', basedon_suffix: ' 种食材',
+    airecipes: 'AI 正在为您搭配菜谱...',
+    analyzingdetails: '分析剩食、计算营养、匹配偏好',
+    usedscraps_prefix: '使用 ', usedscraps_mid: ' 种剩食 · 减少厨余约 ',
+    ingsneeded: '所需食材',
+    steps: '烹饪步骤',
+    storagetitle: '次日存储建议',
+    save: '收藏', shoplist: '购物清单', start: '开始',
+    items: '项', servings: '人份', minutes: '分钟', kcal: 'kcal',
+    ingredientscomplete: '✓ 食材齐全',
+    needtobuy: '补：',
+    usesallscraps: '使用全部剩食',
+    needbuy: '还需购买', allset: '食材齐全，无需采购',
+    storagedefault: '密封冷藏不超过 24 小时。食用前用中火加热至中心温度 75°C 以上。',
+    cookbooktitle: '我的菜谱',
+    cookbookempty: '菜谱本是空的',
+    cookbookemptydesc: '收藏喜欢的菜谱<br/>建立专属您的家庭菜单',
+    snapleftovers: '拍下剩食 →',
+    cookbookstats_prefix: '', cookbookstats_recipes: ' 道收藏菜谱 · 累计减少厨余 ',
+    toastSaved: '已收藏到我的菜谱',
+    toastRemoved: '已从菜谱移除',
+    toastNeedIngs: '请先添加食材',
+    toastAllSet: '食材已齐全 🎉',
+    toastShopList: '购物清单：',
+    toastShared: '分享链接已复制 ✓',
+    saved: '已收藏',
+    levelEasy: '初级', levelMedium: '中级',
+    catChinese: '中式', catWestern: '西式', catSoup: '汤品', catSalad: '沙拉', catFusion: '融合', catMalaysian: '马来式', catAll: '全部',
+    perservings: '人份',
+    goodmorning: '早安',
+    profiletitle: '个人资料',
+    memberSince: '会员自',
+    ecostats: '环保统计',
+    totalsaved: '总挽救',
+    totalrecipes: '已做菜谱',
+    dishes: '道',
+    editprofile: '编辑资料',
+    displayname: '显示名称',
+    email: '电子邮箱',
+    avatar: '头像',
+    savechanges: '保存更改',
+    logout: '退出登录',
+    profilesaved: '资料已保存 ✓',
+    loggedout: '已退出登录',
+    historytitle: '烹饪历史',
+    dishesmade: '道已做菜谱',
+    historyempty: '还没有烹饪记录',
+    historyemptydesc: '开始拍下您的剩食<br/>让我们记录每一次零浪费的美食',
+    starthistory: '开始拍照 →',
+    ecototalstats: '累计减少厨余',
+    moneytotal: '累计节省',
+    cookcount: '次烹饪',
+    today: '今天',
+    yesterday: '昨天',
+    thisweek: '本周',
+    earlier: '更早',
+    madeon: '烹饪日期',
+    rating: '评分',
+    ecothiscook: '本次烹饪环保影响',
+    wastesaved: '挽救食材',
+    moneysaved: '节省金额',
+    leftoversused: '使用的剩食',
+    yourphoto: '您拍摄的剩食',
+    recipeused: '使用的菜谱',
+    mynotes: '我的笔记',
+    notesplaceholder: '记录您的心得、改进建议或家人的反馈...',
+    savenotes: '保存笔记',
+    cookagain: '再做一次',
+    notessaved: '笔记已保存 ✓',
+    historydeleted: '记录已删除',
+    historycleared: '历史已清空',
+    confirmclear: '确定清空所有烹饪历史？',
+    filterall: '全部',
+    filterfavorites: '收藏',
+    filterprotein: '蛋白质',
+    filtervegetable: '蔬菜',
+    women: '女性',
+    men: '男性',
+    recentsearches: '最近搜索',
+    popularsearch: '热门搜索',
+    browsecategory: '分类浏览',
+    recipesgroup: '菜谱',
+    ingredientsgroup: '食材',
+    historygroup: '烹饪历史',
+    noresults: '找不到结果',
+    noresultsdesc: '试试不同的关键词或拍下您的剩食',
+    snapinstead: '拍下剩食',
+    clearall: '清除',
+    catVeg: '蔬菜', catProtein: '蛋白质', catGrain: '主食', catLeftover: '剩菜',
+    addtoings: '添加到食材',
+    foundinhistory: '在历史中找到'
+  },
+  en: {
+    greeting: 'Good morning, Sarah 👋',
+    hometitle: 'What can today\'s<br/>leftovers become?',
+    searchph: 'Search ingredients, recipes, leftovers...',
+    aibadge: 'AI vision recognition',
+    herotitle: 'Snap leftovers, get new dishes',
+    herodesc: 'Point at your leftovers — AI suggests new recipes. Zero waste.',
+    snapnow: 'Take photo',
+    herosub: '→ find recipes',
+    mycookbook: 'My cookbook',
+    mycookbook2: 'My cookbook',
+    cookbookcount: '12 saved recipes',
+    shopping: 'Shopping list',
+    shoppingcount: '3 items pending',
+    ecoweek: 'This week\'s eco impact',
+    saved: 'Saved',
+    savedmoney: 'saved',
+    moneysavedweek: 'Saved this week',
+    foodsavedweek: 'Food saved',
+    viewdetails: 'View details →',
+    cooksthisweek: 'cooks · this week',
+    recentmade: 'Recently made',
+    more: 'More ›',
+    recipe1: 'Veggie fried rice',
+    recipe1sub: 'Used 5 leftovers · 20 min',
+    recipe2: 'Carrot ginger soup',
+    recipe2sub: 'Yesterday · 30 min',
+    match92: '92% match',
+    match76: '76% match',
+    navhome: 'Home', navsnap: 'Snap', navrecipes: 'Recipes', navme: 'Me',
+    snaptitle: 'Snap leftovers',
+    skip: 'Skip',
+    snapcta: 'Tap to take or choose a photo',
+    snapdesc: 'AI identifies your leftovers<br/>and suggests new recipes',
+    analyzing: 'AI is identifying ingredients...',
+    pleasewait: 'Please wait',
+    identify: 'Identify ingredients →',
+    phototip: 'Photo tips',
+    phototipdesc: 'Spread items on a light plate<br/>in good lighting for best results.',
+    yourings: 'Your ingredients',
+    aidetected: '<span class="font-bold">AI detected these</span> · tap to remove',
+    inglist: 'Ingredient list',
+    addingph: 'Add more ingredients...',
+    add: 'Add',
+    dietpref: 'Dietary preferences',
+    vegetarian: 'Vegetarian', vegan: 'Vegan', glutenfree: 'Gluten-free', lowfat: 'Low-fat', mildspice: 'Mild',
+    cooktime: 'Cooking time',
+    time15: '15 min', quick: 'Quick',
+    time30: '30 min', everyday: 'Everyday',
+    anytime: 'Any', slowcook: 'Slow cook',
+    findrecipes: 'Find AI recipes',
+    recapture: 'Re-capture photo',
+    retake: 'Retake',
+    photoready: 'Photo ready',
+    photoremoved: 'Photo removed',
+    nophoto: 'Please select a photo first',
+    nofooddetected: 'No food detected, please add manually',
+    detectionfailed: 'Detection failed, using defaults',
+    detected: 'Detected',
+    recipestitle: 'Recommended',
+    basedon_prefix: 'Based on ', basedon_suffix: ' ingredients',
+    airecipes: 'AI is matching recipes...',
+    analyzingdetails: 'Analyzing leftovers · nutrition · preferences',
+    usedscraps_prefix: 'Uses ', usedscraps_mid: ' leftovers · reduces waste by ',
+    ingsneeded: 'Ingredients needed',
+    steps: 'Cooking steps',
+    storagetitle: 'Storage advice',
+    save: 'Save', shoplist: 'Shopping', start: 'Start',
+    items: 'items', servings: 'servings', minutes: 'minutes', kcal: 'kcal',
+    ingredientscomplete: '✓ All ingredients ready',
+    needtobuy: 'Need: ',
+    usesallscraps: 'Uses all your ingredients',
+    needbuy: 'Also need to buy', allset: 'All ingredients ready, no shopping',
+    storagedefault: 'Refrigerate sealed for up to 24 hours. Reheat to 75°C / 165°F before eating.',
+    cookbooktitle: 'My cookbook',
+    cookbookempty: 'Your cookbook is empty',
+    cookbookemptydesc: 'Save recipes you love<br/>to build your personal menu',
+    snapleftovers: 'Snap leftovers →',
+    cookbookstats_prefix: '', cookbookstats_recipes: ' saved recipes · total waste reduced ',
+    toastSaved: 'Saved to cookbook',
+    toastRemoved: 'Removed from cookbook',
+    toastNeedIngs: 'Please add ingredients first',
+    toastAllSet: 'All ingredients ready 🎉',
+    toastShopList: 'Shopping list: ',
+    toastShared: 'Share link copied ✓',
+    saved: 'Saved',
+    levelEasy: 'Easy', levelMedium: 'Medium',
+    catChinese: 'Chinese', catWestern: 'Western', catSoup: 'Soup', catSalad: 'Salad', catFusion: 'Fusion', catMalaysian: 'Malaysian', catAll: 'All',
+    perservings: 'servings',
+    goodmorning: 'Good morning',
+    profiletitle: 'Profile',
+    memberSince: 'Member since',
+    ecostats: 'Eco impact',
+    totalsaved: 'Total saved',
+    totalrecipes: 'Recipes made',
+    dishes: 'dishes',
+    editprofile: 'Edit profile',
+    displayname: 'Display name',
+    email: 'Email',
+    avatar: 'Avatar',
+    savechanges: 'Save changes',
+    logout: 'Log out',
+    profilesaved: 'Profile saved ✓',
+    loggedout: 'Logged out',
+    historytitle: 'Cooking history',
+    dishesmade: 'dishes made',
+    historyempty: 'No cooking history yet',
+    historyemptydesc: 'Start by snapping your leftovers<br/>and we\'ll track every zero-waste meal',
+    starthistory: 'Take first photo →',
+    ecototalstats: 'Total food saved',
+    moneytotal: 'Total saved',
+    cookcount: 'cooks',
+    today: 'Today',
+    yesterday: 'Yesterday',
+    thisweek: 'This week',
+    earlier: 'Earlier',
+    madeon: 'Cooked on',
+    rating: 'Rating',
+    ecothiscook: 'Eco impact for this cook',
+    wastesaved: 'Food saved',
+    moneysaved: 'Money saved',
+    leftoversused: 'Leftovers used',
+    yourphoto: 'Your leftover photo',
+    recipeused: 'Recipe used',
+    mynotes: 'My notes',
+    notesplaceholder: 'Record your thoughts, improvements, or family feedback...',
+    savenotes: 'Save notes',
+    cookagain: 'Cook again',
+    notessaved: 'Notes saved ✓',
+    historydeleted: 'Entry deleted',
+    historycleared: 'History cleared',
+    confirmclear: 'Clear all cooking history?',
+    filterall: 'All',
+    filterfavorites: 'Favorites',
+    filterprotein: 'Protein',
+    filtervegetable: 'Vegetable',
+    women: 'Women',
+    men: 'Men',
+    recentsearches: 'Recent searches',
+    popularsearch: 'Popular',
+    browsecategory: 'Browse',
+    recipesgroup: 'Recipes',
+    ingredientsgroup: 'Ingredients',
+    historygroup: 'Cooking history',
+    noresults: 'No results found',
+    noresultsdesc: 'Try a different keyword or snap your leftovers',
+    snapinstead: 'Snap leftovers',
+    clearall: 'Clear',
+    catVeg: 'Vegetables', catProtein: 'Protein', catGrain: 'Grains', catLeftover: 'Leftovers',
+    addtoings: 'Add to ingredients',
+    foundinhistory: 'Found in history'
+  }
+};
+
+function t(key) { return (I18N[currentLang] && I18N[currentLang][key]) || I18N.zh[key] || key; }
+
+function applyLang() {
+  document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    el.textContent = t(k);
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const k = el.getAttribute('data-i18n-html');
+    el.innerHTML = t(k);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const k = el.getAttribute('data-i18n-placeholder');
+    el.setAttribute('placeholder', t(k));
+  });
+  // template-style elements (prefix/suffix around dynamic numbers)
+  document.querySelectorAll('[data-i18n-tpl="basedon"]').forEach(el => {
+    const pref = el.querySelector('[data-i18n-prefix]');
+    const suff = el.querySelector('[data-i18n-suffix]');
+    if (pref) pref.textContent = t('basedon_prefix');
+    if (suff) suff.textContent = t('basedon_suffix');
+  });
+  document.querySelectorAll('[data-i18n-tpl="usedscraps"]').forEach(el => {
+    const pref = el.querySelector('[data-i18n-prefix]');
+    const mid = el.querySelector('[data-i18n-mid]');
+    if (pref) pref.innerHTML = '<span class="font-bold">' + t('usedscraps_prefix') + '</span>';
+    if (mid) mid.innerHTML = '<span class="font-bold">' + t('usedscraps_mid') + '</span>';
+  });
+  // dynamic chip count
+  const ic = document.getElementById('ing-count');
+  if (ic) ic.textContent = ingredients.length + ' ' + t('items');
+  // toggle label
+  const lbl = document.getElementById('lang-label');
+  if (lbl) lbl.textContent = currentLang === 'zh' ? 'EN' : '中';
+
+  /* Render user profile values */
+  applyProfile();
+
+  // re-render dynamic content if present
+  if (recipes.length) renderRecipes();
+  if (currentRecipe && document.getElementById('screen-detail').classList.contains('active')) {
+    openDetail(currentRecipe);
+  }
+  if (document.getElementById('screen-cookbook').classList.contains('active')) renderCookbook();
+  if (document.getElementById('screen-history').classList.contains('active')) renderHistory();
+  if (currentHistoryEntry && document.getElementById('screen-history-detail').classList.contains('active')) {
+    openHistoryDetail(currentHistoryEntry.id);
+  }
+  renderHomeHistory();
+  renderChips();
+}
+
+function applyProfile() {
+  /* reflect profile values onto every element that needs them */
+  const greetingName = document.getElementById('user-name-greeting');
+  if (greetingName) greetingName.textContent = userProfile.name;
+
+  const profName = document.getElementById('profile-name');
+  if (profName) profName.textContent = userProfile.name;
+  const profEmail = document.getElementById('profile-email');
+  if (profEmail) profEmail.textContent = userProfile.email;
+  const profSince = document.getElementById('profile-since');
+  if (profSince) profSince.textContent = userProfile.since;
+
+  const editName = document.getElementById('edit-name');
+  if (editName) editName.value = userProfile.name;
+  const editEmail = document.getElementById('edit-email');
+  if (editEmail) editEmail.value = userProfile.email;
+
+  const homeAv = document.getElementById('home-avatar-img');
+  if (homeAv) homeAv.src = avatarUrl(userProfile.avatar);
+  const profAv = document.getElementById('profile-avatar-img');
+  if (profAv) profAv.src = avatarUrl(userProfile.avatar);
+
+  /* render avatar picker — grouped by gender */
+  const picker = document.getElementById('avatar-picker');
+  if (picker) {
+    const women = AVATAR_OPTIONS.filter(a => a.gender === 'female');
+    const men = AVATAR_OPTIONS.filter(a => a.gender === 'male');
+    const renderRow = (list) => list.map(a => `
+      <button onclick="selectAvatar('${a.id}')" class="w-12 h-12 rounded-full overflow-hidden border-2 ${userProfile.avatar === a.id ? 'border-primary ring-2 ring-primary/30' : 'border-transparent'} active:scale-90 transition-transform">
+        <img src="${a.url}" alt="avatar" class="w-full h-full object-cover"/>
+      </button>
+    `).join('');
+    picker.innerHTML = `
+      <div class="w-full">
+        <p class="text-[10px] text-secondary font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5">
+          <span class="material-symbols-outlined" style="font-size:14px;">female</span>
+          ${t('women')}
+        </p>
+        <div class="flex gap-2 flex-wrap mb-3">${renderRow(women)}</div>
+        <p class="text-[10px] text-secondary font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5">
+          <span class="material-symbols-outlined" style="font-size:14px;">male</span>
+          ${t('men')}
+        </p>
+        <div class="flex gap-2 flex-wrap">${renderRow(men)}</div>
+      </div>`;
+  }
+}
+
+function selectAvatar(id) {
+  userProfile.avatar = id;
+  applyProfile();
+}
+
+function saveProfile() {
+  const editName = document.getElementById('edit-name');
+  const editEmail = document.getElementById('edit-email');
+  if (editName) userProfile.name = editName.value.trim() || userProfile.name;
+  if (editEmail) userProfile.email = editEmail.value.trim() || userProfile.email;
+  localStorage.setItem('ecobite_profile', JSON.stringify(userProfile));
+  applyProfile();
+  showToast(t('profilesaved'));
+}
+
+function logout() {
+  localStorage.removeItem('ecobite_profile');
+  userProfile = DEFAULT_PROFILE[currentLang];
+  applyProfile();
+  showToast(t('loggedout'));
+  goTo('home');
+}
+
+function toggleLang() {
+  currentLang = currentLang === 'zh' ? 'en' : 'zh';
+  localStorage.setItem('ecobite_lang', currentLang);
+  /* If user hasn't customized profile, swap to language-appropriate default */
+  if (!localStorage.getItem('ecobite_profile')) {
+    userProfile = { ...DEFAULT_PROFILE[currentLang] };
+  }
+  applyLang();
+}
+
+const CATEGORY_BG = {
+  '亚洲': '#dfe9cd', '中式': '#dfe9cd', 'Chinese': '#dfe9cd',
+  '汤品': '#d5e6e1', 'Soup': '#d5e6e1',
+  '西式': '#fde4c0', 'Western': '#fde4c0',
+  '沙拉': '#dfe9cd', 'Salad': '#dfe9cd',
+  '融合': '#f3e8d6', 'Fusion': '#f3e8d6',
+  '马来式': '#fae6c2', 'Malaysian': '#fae6c2'
+};
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function goTo(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screen).classList.add('active');
+  if (screen === 'cookbook') renderCookbook();
+  if (screen === 'history') renderHistory();
+  if (screen === 'home') renderHomeHistory();
+  if (screen === 'camera') {
+    /* Reset to empty state if no photo loaded */
+    if (!uploadedImageB64 && typeof setPhotoState === 'function') setPhotoState('empty');
+  }
+  if (screen === 'search') {
+    /* reset search input on entry */
+    const inp = document.getElementById('search-input');
+    if (inp) {
+      inp.value = '';
+      setTimeout(() => inp.focus(), 100);
+    }
+    performSearch('');
+  }
+}
+
+/* ── PHOTO HANDLING ──────────────────────────
+   States:
+   - empty:    cam-area shown, no preview, no actions
+   - loaded:   preview-wrap shown, photo-actions row visible (Identify + Retake)
+   - analyzing: spinner shown, all else hidden  */
+
+function setPhotoState(state) {
+  const camArea = document.getElementById('cam-area');
+  const preview = document.getElementById('preview-wrap');
+  const actions = document.getElementById('photo-actions');
+  const spinner = document.getElementById('analyzing');
+
+  /* hide all by default */
+  camArea.classList.add('hidden');
+  preview.classList.add('hidden');
+  actions.classList.add('hidden');
+  spinner.classList.add('hidden');
+
+  if (state === 'empty') {
+    camArea.classList.remove('hidden');
+  } else if (state === 'loaded') {
+    preview.classList.remove('hidden');
+    actions.classList.remove('hidden');
+  } else if (state === 'analyzing') {
+    preview.classList.remove('hidden');
+    spinner.classList.remove('hidden');
+  }
+}
+
+function handlePhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const src = ev.target.result;
+    const img = document.getElementById('preview-img');
+    img.src = src;
+    uploadedImageB64 = src.split(',')[1];
+    setPhotoState('loaded');
+  };
+  reader.readAsDataURL(file);
+}
+
+/* Re-capture: trigger the file input again so user can pick or shoot a fresh photo.
+   Resets the file input so selecting the SAME file still triggers onchange. */
+function retakePhoto() {
+  const inp = document.getElementById('file-input');
+  inp.value = '';                     /* clear so re-selecting same file fires change */
+  inp.click();                        /* opens camera/gallery picker */
+}
+
+/* Discard: throw away the current photo and return to empty state. */
+function discardPhoto() {
+  uploadedImageB64 = null;
+  document.getElementById('preview-img').src = '';
+  document.getElementById('file-input').value = '';
+  setPhotoState('empty');
+  showToast(t('photoremoved'));
+}
+
+/* ── INGREDIENT DETECTION PIPELINE ───────────────────────────
+   1. Build vision prompt asking for structured detection w/ confidence
+   2. Send to Claude vision API
+   3. Parse JSON (with regex fallback if malformed)
+   4. Normalize each name (lowercase, trim, strip plurals, alias-map)
+   5. Deduplicate against existing list
+   6. Filter low-confidence items (< 0.4)
+   7. Cross-reference INGREDIENTS_INDEX to surface canonical names + emojis
+   ─────────────────────────────────────────────────────────── */
+
+/* Common alias map → canonical bilingual name */
+const ALIAS_MAP = {
+  /* English aliases → canonical EN */
+  'egg': 'eggs', 'tomatoes': 'tomato', 'potatoes': 'potato',
+  'carrot': 'carrots', 'mushrooms': 'mushroom',
+  'spring onion': 'scallions', 'green onion': 'scallions',
+  'bell pepper': 'pepper', 'capsicum': 'pepper',
+  'prawns': 'shrimp', 'prawn': 'shrimp', 'shrimps': 'shrimp',
+  'chilis': 'chili', 'chillies': 'chili', 'chilies': 'chili', 'chillis': 'chili', 'chilli': 'chili',
+  'water spinach': 'kangkung', 'morning glory': 'kangkung', 'ong choy': 'kangkung',
+  'pak choi': 'bok choy', 'pakchoy': 'bok choy', 'baby bok choy': 'bok choy',
+  'aubergine': 'eggplant', 'brinjal': 'eggplant',
+  'ginger root': 'ginger',
+  /* Chinese aliases → canonical ZH */
+  '蛋': '鸡蛋', '葱': '青葱', '青菜': '小白菜',
+  '胡萝': '胡萝卜', '红萝卜': '胡萝卜',
+  '马铃薯': '土豆',
+  '蕃茄': '番茄', '西红柿': '番茄',
+  '蒜': '大蒜', '蒜头': '大蒜',
+  '芽菜': '豆芽', '银芽': '豆芽',
+  '虾仁': '虾'
+};
+
+function normalizeName(raw) {
+  if (!raw) return '';
+  let s = String(raw).trim();
+  /* strip surrounding punctuation/quotes */
+  s = s.replace(/^["'`「『]+|["'`」』]+$/g, '');
+  /* lowercase ONLY for English (preserve CJK as-is) */
+  const isCJK = /[\u4e00-\u9fff]/.test(s);
+  const key = isCJK ? s : s.toLowerCase();
+  /* alias lookup */
+  if (ALIAS_MAP[key]) return ALIAS_MAP[key];
+  return key;
+}
+
+/* Look up an ingredient name in the index → returns full record (with emoji) or null */
+function lookupIngredient(name) {
+  const n = normalizeName(name);
+  return INGREDIENTS_INDEX.find(i =>
+    i.zh === n || i.en.toLowerCase() === n.toLowerCase()
+  ) || null;
+}
+
+/* Robust JSON extraction — handles raw JSON, ```json blocks, or stray prefix text */
+function extractJSON(text) {
+  if (!text) return null;
+  /* strip markdown fences */
+  let cleaned = text.replace(/```(?:json)?\s*|\s*```/g, '').trim();
+  /* try direct parse */
+  try { return JSON.parse(cleaned); } catch (_) {}
+  /* try to find first JSON array or object substring */
+  const arrayMatch = cleaned.match(/\[[\s\S]*\]/);
+  if (arrayMatch) {
+    try { return JSON.parse(arrayMatch[0]); } catch (_) {}
+  }
+  const objectMatch = cleaned.match(/\{[\s\S]*\}/);
+  if (objectMatch) {
+    try { return JSON.parse(objectMatch[0]); } catch (_) {}
+  }
+  return null;
+}
+
+/* Build the vision prompt asking Claude for structured detection */
+function buildVisionPrompt() {
+  if (currentLang === 'zh') {
+    return `仔细查看这张食物照片，识别所有可见的食材、食物或剩菜。
+为每个识别项提供：
+- name：简体中文食材名（例如"鸡蛋"、"胡萝卜"、"米饭"）
+- confidence：识别可信度，0 到 1 之间（1 = 非常确定）
+- category：分类，可选 "veg"（蔬菜）、"protein"（蛋白质）、"grain"（主食）、"other"（其他）
+- estimated_amount：估计份量（例如"2 个"、"半碗"），如果无法判断则写 "unknown"
+
+只返回有效的 JSON 数组，格式：
+[{"name":"鸡蛋","confidence":0.95,"category":"protein","estimated_amount":"2 个"}, ...]
+
+规则：
+- 不要返回 markdown 或代码块标记
+- 如果照片不是食物，返回空数组 []
+- 最多识别 8 个最明显的项
+- 忽略容器、餐具、装饰`;
+  }
+  return `Carefully examine this food photo and identify every visible ingredient, food item, or leftover.
+For each detected item provide:
+- name: ingredient name in English (e.g. "eggs", "carrots", "rice")
+- confidence: detection confidence between 0 and 1 (1 = very certain)
+- category: one of "veg", "protein", "grain", "other"
+- estimated_amount: rough quantity (e.g. "2 pieces", "half cup"), or "unknown"
+
+Return ONLY a valid JSON array in this format:
+[{"name":"eggs","confidence":0.95,"category":"protein","estimated_amount":"2 pieces"}, ...]
+
+Rules:
+- No markdown, no code fences, no commentary
+- If the photo is not food, return an empty array []
+- Maximum 8 most prominent items
+- Ignore plates, utensils, decorations`;
+}
+
+/* The main detection function — called by analyzePhoto */
+async function detectIngredientsFromPhoto(b64) {
+  const prompt = buildVisionPrompt();
+  const body = {
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 800,
+    messages: [{
+      role: 'user',
+      content: [
+        { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 }},
+        { type: 'text', text: prompt }
+      ]
+    }]
+  };
+  const res = await fetch(API, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error('API returned ' + res.status);
+  const data = await res.json();
+  const rawText = (data.content && data.content[0] && data.content[0].text) || '';
+  const parsed = extractJSON(rawText);
+  if (!parsed) throw new Error('Could not parse detection response');
+  if (!Array.isArray(parsed)) throw new Error('Detection response is not an array');
+  return parsed;
+}
+
+/* Process raw detections → final clean ingredient list */
+function processDetections(detections) {
+  const MIN_CONFIDENCE = 0.4;
+
+  /* Step 1: filter, normalize, validate */
+  const cleaned = detections
+    .filter(d => d && d.name)
+    .filter(d => (d.confidence == null) || d.confidence >= MIN_CONFIDENCE)
+    .map(d => {
+      const normalized = normalizeName(d.name);
+      const indexed = lookupIngredient(normalized);
+      return {
+        name: indexed ? (currentLang === 'zh' ? indexed.zh : indexed.en) : normalized,
+        confidence: typeof d.confidence === 'number' ? d.confidence : 0.8,
+        category: d.category || (indexed ? indexed.cat : 'other'),
+        amount: d.estimated_amount || '',
+        emoji: indexed ? indexed.emoji : null
+      };
+    });
+
+  /* Step 2: deduplicate by lowercase-name */
+  const seen = new Set();
+  const deduped = [];
+  for (const item of cleaned) {
+    const key = item.name.toLowerCase();
+    if (!seen.has(key)) {
+      seen.add(key);
+      deduped.push(item);
+    }
+  }
+
+  /* Step 3: sort by confidence desc, then by category */
+  deduped.sort((a, b) => b.confidence - a.confidence);
+
+  return deduped;
+}
+
+async function analyzePhoto() {
+  if (!uploadedImageB64) {
+    showToast(t('nophoto'));
+    return;
+  }
+  setPhotoState('analyzing');
+
+  let detected = [];
+  let usedFallback = false;
+
+  try {
+    const raw = await detectIngredientsFromPhoto(uploadedImageB64);
+    detected = processDetections(raw);
+    if (detected.length === 0) {
+      /* Photo wasn't food, or nothing detected — show toast & let user add manually */
+      showToast(t('nofooddetected'));
+      ingredients = [];
+    } else {
+      /* Convert to flat name array for the chips list */
+      ingredients = detected.map(d => d.name);
+      /* Persist rich metadata for ingredient screen — confidence pills, etc. */
+      detectedDetails = detected;
+      showToast(t('detected') + ' ' + detected.length + ' ' + t('items'));
+    }
+  } catch (err) {
+    console.error('Detection failed:', err);
+    usedFallback = true;
+    /* Graceful degradation: use sensible default so user can still proceed */
+    ingredients = currentLang === 'zh'
+      ? ['胡萝卜', '鸡蛋', '米饭', '洋葱', '大蒜']
+      : ['carrots', 'eggs', 'rice', 'onion', 'garlic'];
+    detectedDetails = ingredients.map(n => {
+      const i = lookupIngredient(n);
+      return { name: n, confidence: 0, category: i ? i.cat : 'other', amount: '', emoji: i ? i.emoji : null };
+    });
+    showToast(t('detectionfailed'));
+  }
+
+  setPhotoState('loaded');
+  renderChips();
+  goTo('ingredients');
+}
+
+/* Stores rich detection metadata (confidence, amount, emoji) for the ingredient chips */
+let detectedDetails = [];
+
+function renderChips() {
+  const wrap = document.getElementById('chips-wrap');
+  if (!wrap) return;
+  wrap.innerHTML = ingredients.map((ing, i) => {
+    /* Pull rich metadata from detection if available, else from index */
+    const detail = detectedDetails && detectedDetails[i] && detectedDetails[i].name === ing
+      ? detectedDetails[i]
+      : null;
+    const indexed = lookupIngredient(ing);
+    const emoji = (detail && detail.emoji) || (indexed && indexed.emoji) || '';
+    /* Confidence indicator dot — green ≥0.85, amber ≥0.6, gray else; hidden if no detection */
+    let confDot = '';
+    if (detail && detail.confidence > 0) {
+      const c = detail.confidence;
+      const color = c >= 0.85 ? '#7ea05a' : (c >= 0.6 ? '#EF9F27' : '#bcb19c');
+      const title = currentLang === 'zh'
+        ? `识别可信度：${Math.round(c * 100)}%`
+        : `Confidence: ${Math.round(c * 100)}%`;
+      confDot = `<span class="inline-block w-1.5 h-1.5 rounded-full" style="background:${color};" title="${title}"></span>`;
+    }
+    return `
+      <button onclick="removeIngredient(${i})" class="h-9 px-3 rounded-full bg-eco-leaf-container text-eco-leaf-dim text-[13px] font-medium flex items-center gap-1.5 active:scale-95 transition-transform">
+        ${emoji ? `<span style="font-size:14px;">${emoji}</span>` : ''}
+        ${confDot}
+        ${ing}
+        <span class="material-symbols-outlined opacity-60" style="font-size:14px;">close</span>
+      </button>`;
+  }).join('');
+  const ic = document.getElementById('ing-count');
+  if (ic) ic.textContent = ingredients.length + ' ' + t('items');
+
+  /* Update detection summary line: avg confidence + category breakdown */
+  const summary = document.getElementById('detection-summary');
+  if (summary) {
+    const fromAI = detectedDetails.filter(d => d && d.confidence > 0 && d.confidence < 1);
+    if (fromAI.length === 0) {
+      summary.textContent = '';
+    } else {
+      const avgConf = Math.round(fromAI.reduce((s, d) => s + d.confidence, 0) / fromAI.length * 100);
+      const cats = {};
+      detectedDetails.forEach(d => {
+        const c = d.category || 'other';
+        cats[c] = (cats[c] || 0) + 1;
+      });
+      const catLabels = {
+        veg: t('catVeg'), protein: t('catProtein'),
+        grain: t('catGrain'), other: currentLang === 'zh' ? '其他' : 'other'
+      };
+      const catsStr = Object.entries(cats)
+        .map(([k, v]) => `${v} ${catLabels[k] || k}`)
+        .join(' · ');
+      const confLabel = currentLang === 'zh' ? '平均可信度' : 'avg confidence';
+      summary.textContent = `${catsStr} · ${confLabel} ${avgConf}%`;
+    }
+  }
+}
+
+function removeIngredient(i) {
+  ingredients.splice(i, 1);
+  if (detectedDetails && detectedDetails.length > i) detectedDetails.splice(i, 1);
+  renderChips();
+}
+
+function addIngredient() {
+  const inp = document.getElementById('add-input');
+  const v = inp.value.trim();
+  if (v) {
+    const normalized = normalizeName(v);
+    const indexed = lookupIngredient(normalized);
+    /* Use canonical name from index if found */
+    const finalName = indexed ? (currentLang === 'zh' ? indexed.zh : indexed.en) : normalized;
+    if (!ingredients.includes(finalName)) {
+      ingredients.push(finalName);
+      detectedDetails.push({
+        name: finalName,
+        confidence: 1,    /* user-added = 100% */
+        category: indexed ? indexed.cat : 'other',
+        amount: '',
+        emoji: indexed ? indexed.emoji : null
+      });
+    }
+    inp.value = '';
+    renderChips();
+  }
+}
+
+function togglePref(btn) {
+  btn.classList.toggle('bg-primary-container');
+  btn.classList.toggle('text-on-primary-container');
+  btn.classList.toggle('border-primary');
+  btn.classList.toggle('bg-surface-container-high');
+  btn.classList.toggle('text-secondary');
+  const p = btn.textContent.trim();
+  prefs = prefs.includes(p) ? prefs.filter(x=>x!==p) : [...prefs, p];
+}
+
+function toggleTime(btn) {
+  document.querySelectorAll('.time-chip').forEach(b => {
+    b.classList.remove('bg-primary-container', 'text-on-primary-container', 'border-2', 'border-primary');
+    b.classList.add('bg-surface-container-high', 'text-on-surface', 'border', 'border-outline-variant/30');
+    const sub = b.querySelector('.text-\\[10px\\]');
+    if (sub) sub.classList.add('text-secondary');
+  });
+  btn.classList.remove('bg-surface-container-high', 'text-on-surface', 'border', 'border-outline-variant/30');
+  btn.classList.add('bg-primary-container', 'text-on-primary-container', 'border-2', 'border-primary');
+  const sub = btn.querySelector('.text-\\[10px\\]');
+  if (sub) sub.classList.remove('text-secondary');
+  timePref = btn.querySelector('.font-bold').textContent;
+}
+
+async function findRecipes() {
+  if (ingredients.length === 0) { showToast(t('toastNeedIngs')); return; }
+  goTo('recipes');
+  document.getElementById('recipes-loading').classList.remove('hidden');
+  document.getElementById('recipes-content').classList.add('hidden');
+  document.getElementById('ing-summary').textContent = ingredients.length;
+
+  let prompt;
+  if (currentLang === 'zh') {
+    const prefStr = prefs.length ? `饮食偏好：${prefs.join('、')}。` : '';
+    prompt = `我有这些剩余食材：${ingredients.join('、')}。${prefStr}时间偏好：${timePref}。
+请推荐 4 道菜，每道可能需要补充 1-2 种简单食材。
+只返回 JSON 数组，每个对象格式：
+{"name":"中文菜名","emoji":"单个食物 emoji","category":"中式|西式|汤品|沙拉|融合","time":"X 分钟","servings":2,"kcal":300,"difficulty":"初级|中级","match":85,"needs":["补充食材"],"ingredients":[{"name":"食材","amount":"用量"}],"steps":["步骤1","步骤2","步骤3","步骤4"],"storage":"次日存储建议（中文）"}
+不要任何其他文字、markdown 或代码块标记。`;
+  } else {
+    const prefStr = prefs.length ? `Dietary preferences: ${prefs.join(', ')}.` : '';
+    prompt = `I have these leftover ingredients: ${ingredients.join(', ')}. ${prefStr} Time preference: ${timePref}.
+Suggest 4 dishes I can make. Each may need 1-2 extra simple ingredients.
+Return ONLY a JSON array of objects with this format:
+{"name":"dish name in English","emoji":"single food emoji","category":"Chinese|Western|Soup|Salad|Fusion","time":"X min","servings":2,"kcal":300,"difficulty":"Easy|Medium","match":85,"needs":["extra ingredient"],"ingredients":[{"name":"ingredient","amount":"quantity"}],"steps":["step 1","step 2","step 3","step 4"],"storage":"storage advice in English"}
+No markdown, no code fences, no other text.`;
+  }
+
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, messages: [{role:'user', content: prompt}]})
+    });
+    const data = await res.json();
+    const txt = data.content[0].text.replace(/```json|```/g, '').trim();
+    recipes = JSON.parse(txt);
+  } catch(e) {
+    if (currentLang === 'zh') {
+      recipes = [
+        { name: '蔬菜蛋炒饭', emoji: '🍚', category: '中式', time: '20 分钟', servings: 2, kcal: 320, difficulty: '初级', match: 92, needs: [],
+          ingredients: [{name:'米饭',amount:'2 碗'},{name:'鸡蛋',amount:'2 个'},{name:'胡萝卜',amount:'1 根'},{name:'洋葱',amount:'半个'},{name:'大蒜',amount:'3 瓣'}],
+          steps: ['热锅下油，蒜末爆香，加洋葱炒至透明。','加入切丁胡萝卜翻炒 3 分钟。','倒入米饭翻炒均匀，推到锅边。','空出位置打入鸡蛋，炒散后与米饭混匀。','加少许盐和酱油调味，撒葱花起锅。'],
+          storage: '密封冷藏 24 小时内食用，食用前用微波加热至冒蒸汽。' },
+        { name: '鸡蛋蔬菜炒', emoji: '🥘', category: '中式', time: '15 分钟', servings: 2, kcal: 280, difficulty: '初级', match: 85, needs: ['酱油'],
+          ingredients: [{name:'鸡蛋',amount:'3 个'},{name:'洋葱',amount:'半个'},{name:'胡萝卜',amount:'1 根'},{name:'大蒜',amount:'2 瓣'}],
+          steps: ['鸡蛋打散加少许盐。','热锅下油爆香蒜末。','加入蔬菜大火翻炒 4 分钟。','倒入蛋液炒至金黄。','加酱油翻匀出锅。'],
+          storage: '炒蛋类菜肴最好当天食用，隔夜口感会变差。' },
+        { name: '胡萝卜浓汤', emoji: '🥣', category: '汤品', time: '30 分钟', servings: 4, kcal: 180, difficulty: '初级', match: 76, needs: ['生姜', '蔬菜高汤'],
+          ingredients: [{name:'胡萝卜',amount:'4 根'},{name:'洋葱',amount:'1 个'},{name:'大蒜',amount:'3 瓣'},{name:'蔬菜高汤',amount:'800ml'}],
+          steps: ['黄油融化，洋葱蒜末小火炒 5 分钟。','加入切块胡萝卜和姜片续炒 3 分钟。','倒入高汤煮沸后转小火 20 分钟。','用搅拌棒打成顺滑浓汤。','调味，淋少许奶油装饰。'],
+          storage: '冷藏可保存 3 天，食用前重新煮沸即可。' },
+        { name: '法式蛋饼卷', emoji: '🌯', category: '西式', time: '10 分钟', servings: 1, kcal: 350, difficulty: '初级', match: 80, needs: ['墨西哥饼'],
+          ingredients: [{name:'鸡蛋',amount:'3 个'},{name:'洋葱',amount:'1/4 个'},{name:'胡萝卜',amount:'半根'}],
+          steps: ['3 个鸡蛋打散，加盐胡椒。','倒入热油的平底锅。','撒上切丁的蔬菜在蛋液上。','蛋液凝固后轻轻折叠。','滑到温热的饼上卷起。'],
+          storage: '建议现做现吃，蛋饼回温后口感不佳。' }
+      ];
+    } else {
+      recipes = [
+        { name: 'Veggie fried rice', emoji: '🍚', category: 'Chinese', time: '20 min', servings: 2, kcal: 320, difficulty: 'Easy', match: 92, needs: [],
+          ingredients: [{name:'rice',amount:'2 cups'},{name:'eggs',amount:'2'},{name:'carrot',amount:'1'},{name:'onion',amount:'½'},{name:'garlic',amount:'3 cloves'}],
+          steps: ['Heat oil, sauté garlic and onion until golden.','Add diced carrots and stir-fry for 3 minutes.','Add cooked rice, mix well, push to one side.','Crack eggs into the empty space, scramble, then mix with rice.','Season with salt and soy sauce, top with scallions.'],
+          storage: 'Refrigerate sealed for up to 24 hours. Reheat in microwave until steaming.' },
+        { name: 'Egg & veg stir fry', emoji: '🥘', category: 'Chinese', time: '15 min', servings: 2, kcal: 280, difficulty: 'Easy', match: 85, needs: ['soy sauce'],
+          ingredients: [{name:'eggs',amount:'3'},{name:'onion',amount:'½'},{name:'carrot',amount:'1'},{name:'garlic',amount:'2 cloves'}],
+          steps: ['Beat eggs with a pinch of salt.','Heat oil in a wok and fry garlic.','Add vegetables and stir-fry for 4 minutes.','Pour in eggs and cook until golden.','Add soy sauce and toss to combine.'],
+          storage: 'Best eaten same day — texture suffers overnight.' },
+        { name: 'Carrot ginger soup', emoji: '🥣', category: 'Soup', time: '30 min', servings: 4, kcal: 180, difficulty: 'Easy', match: 76, needs: ['ginger', 'vegetable broth'],
+          ingredients: [{name:'carrots',amount:'4'},{name:'onion',amount:'1'},{name:'garlic',amount:'3 cloves'},{name:'broth',amount:'800ml'}],
+          steps: ['Melt butter, sauté onion and garlic for 5 min.','Add chopped carrots and ginger, cook 3 min.','Pour in broth, bring to boil, simmer 20 min.','Blend until smooth.','Season and serve with a swirl of cream.'],
+          storage: 'Keeps refrigerated for 3 days. Bring to a boil before serving.' },
+        { name: 'Veggie omelette wrap', emoji: '🌯', category: 'Western', time: '10 min', servings: 1, kcal: 350, difficulty: 'Easy', match: 80, needs: ['tortilla'],
+          ingredients: [{name:'eggs',amount:'3'},{name:'onion',amount:'¼'},{name:'carrot',amount:'½'}],
+          steps: ['Beat 3 eggs with salt and pepper.','Pour into a hot oiled pan.','Sprinkle diced veggies on top.','Once set, fold gently.','Slide onto a warm tortilla and roll.'],
+          storage: 'Best fresh — not great reheated.' }
+      ];
+    }
+  }
+
+  renderRecipes();
+  document.getElementById('recipes-loading').classList.add('hidden');
+  document.getElementById('recipes-content').classList.remove('hidden');
+}
+
+function renderRecipes() {
+  const cats = ['全部', ...new Set(recipes.map(r => r.category))];
+  const catLabel = c => {
+    const map = { '全部': t('catAll'), '中式': t('catChinese'), '西式': t('catWestern'),
+      '汤品': t('catSoup'), '沙拉': t('catSalad'), '融合': t('catFusion'), '马来式': t('catMalaysian'),
+      'All': t('catAll'), 'Chinese': t('catChinese'), 'Western': t('catWestern'),
+      'Soup': t('catSoup'), 'Salad': t('catSalad'), 'Fusion': t('catFusion'), 'Malaysian': t('catMalaysian') };
+    return map[c] || c;
+  };
+  document.getElementById('filter-row').innerHTML = cats.map(c => `
+    <button onclick="filterBy('${c}')" class="whitespace-nowrap h-9 px-4 rounded-full text-[12px] font-medium flex-shrink-0 active:scale-95 transition-transform ${c === activeFilter ? 'bg-primary-container text-on-primary-container shadow-sm' : 'bg-surface-container-high text-secondary'}">${catLabel(c)}</button>
+  `).join('');
+
+  const filtered = activeFilter === '全部' ? recipes : recipes.filter(r => r.category === activeFilter);
+  document.getElementById('recipes-list').innerHTML = filtered.map(r => `
+    <article onclick='openDetail(${JSON.stringify(r).replace(/'/g,"&#39;")})' class="bg-surface-container-lowest rounded-DEFAULT flex overflow-hidden shadow-[0_4px_24px_rgba(56,50,35,0.04)] active:scale-[0.98] transition-transform cursor-pointer">
+      <div class="w-32 h-32 flex-shrink-0 overflow-hidden">
+        <img src="${recipePhoto(r)}" alt="${r.name}" class="w-full h-full object-cover" loading="lazy"/>
+      </div>
+      <div class="p-4 flex flex-col justify-between flex-grow min-w-0">
+        <div>
+          <div class="flex items-center gap-1.5 mb-1">
+            <span class="bg-eco-leaf-container text-eco-leaf-dim text-[10px] font-bold px-2 py-0.5 rounded-full">${r.match}% ${currentLang === 'zh' ? '匹配' : 'match'}</span>
+            ${r.needs.length === 0 ? `<span class="text-eco-leaf-dim text-[10px] font-bold">${t('ingredientscomplete')}</span>` : ''}
+          </div>
+          <h3 class="font-headline font-bold text-[15px] leading-tight text-on-surface mb-1 truncate">${r.name}</h3>
+          <p class="text-[11px] text-secondary mb-1">${r.needs.length > 0 ? t('needtobuy') + r.needs.join(currentLang === 'zh' ? '、' : ', ') : t('usesallscraps')}</p>
+          <div class="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-secondary">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:14px;">schedule</span>${r.time}</span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:14px;">equalizer</span>${r.difficulty}</span>
+          </div>
+        </div>
+        <div class="flex items-center justify-between mt-2">
+          <span class="bg-primary-container/40 text-on-primary-container px-2 py-0.5 rounded-full text-[11px] font-bold">${r.kcal} kcal</span>
+          <span class="material-symbols-outlined text-primary" style="font-size:18px;">arrow_forward</span>
+        </div>
+      </div>
+    </article>
+  `).join('');
+}
+
+function filterBy(cat) {
+  activeFilter = cat;
+  renderRecipes();
+}
+
+function openDetail(r) {
+  currentRecipe = r;
+  const photo = recipePhoto(r);
+  const heroEl = document.getElementById('detail-hero');
+  heroEl.style.background = `url('${photo}') center/cover no-repeat, #f3e8d6`;
+  const matchLabel = currentLang === 'zh' ? '匹配' : 'match';
+  document.getElementById('detail-hero-content').innerHTML = `
+    <h2 class="font-headline font-bold text-2xl mb-1 drop-shadow-lg">${r.name}</h2>
+    <div class="flex flex-wrap gap-1.5">
+      <span class="bg-white/25 backdrop-blur text-white text-[11px] font-bold px-2.5 py-1 rounded-full">${r.match}% ${matchLabel}</span>
+      <span class="bg-white/25 backdrop-blur text-white text-[11px] font-bold px-2.5 py-1 rounded-full">${r.difficulty}</span>
+      <span class="bg-white/25 backdrop-blur text-white text-[11px] font-bold px-2.5 py-1 rounded-full">${r.category}</span>
+    </div>
+  `;
+  document.getElementById('detail-used').textContent = ingredients.length;
+  document.getElementById('detail-waste').textContent = (ingredients.length * 90) + 'g';
+  // re-apply usedscraps template translations
+  const usedEl = document.querySelector('[data-i18n-tpl="usedscraps"]');
+  if (usedEl) {
+    const pref = usedEl.querySelector('[data-i18n-prefix]');
+    const mid = usedEl.querySelector('[data-i18n-mid]');
+    if (pref) pref.innerHTML = '<span class="font-bold">' + t('usedscraps_prefix') + '</span>';
+    if (mid) mid.innerHTML = '<span class="font-bold">' + t('usedscraps_mid') + '</span>';
+  }
+
+  const minLabel = currentLang === 'zh' ? '分钟' : 'min';
+  const servLabel = t('perservings').toUpperCase();
+  document.getElementById('detail-stats').innerHTML = `
+    <div class="bg-surface-container-low rounded-DEFAULT p-3 text-center">
+      <p class="text-2xl font-bold font-headline text-primary">${r.kcal}</p>
+      <p class="text-[10px] text-secondary font-bold uppercase tracking-wider mt-0.5">kcal</p>
+    </div>
+    <div class="bg-surface-container-low rounded-DEFAULT p-3 text-center">
+      <p class="text-2xl font-bold font-headline text-on-surface">${r.servings}</p>
+      <p class="text-[10px] text-secondary font-bold uppercase tracking-wider mt-0.5">${servLabel}</p>
+    </div>
+    <div class="bg-surface-container-low rounded-DEFAULT p-3 text-center">
+      <p class="text-2xl font-bold font-headline text-on-surface">${(r.time + '').replace(/[^\d]/g,'')}</p>
+      <p class="text-[10px] text-secondary font-bold uppercase tracking-wider mt-0.5">${minLabel}</p>
+    </div>
+  `;
+  if (r.needs && r.needs.length) {
+    document.getElementById('detail-needs').innerHTML = `
+      <div class="bg-primary-container/30 rounded-DEFAULT p-4 mb-5 border-l-4 border-primary flex gap-3">
+        <span class="material-symbols-outlined text-primary flex-shrink-0" style="font-size:22px;">shopping_basket</span>
+        <div>
+          <p class="font-bold font-headline text-[13px] text-on-primary-container mb-1">${t('needbuy')}</p>
+          <p class="text-[12px] text-on-primary-container/80">${r.needs.join(currentLang === 'zh' ? '、' : ', ')}</p>
+        </div>
+      </div>
+    `;
+  } else {
+    document.getElementById('detail-needs').innerHTML = `
+      <div class="bg-eco-leaf-container/50 rounded-DEFAULT p-4 mb-5 flex gap-3 items-center">
+        <span class="material-symbols-outlined text-eco-leaf-dim flex-shrink-0" style="font-size:22px;">check_circle</span>
+        <p class="text-[13px] text-eco-leaf-dim font-bold">${t('allset')}</p>
+      </div>
+    `;
+  }
+  document.getElementById('detail-ingredients').innerHTML = (r.ingredients || []).map(i => `
+    <div class="flex items-center justify-between py-2 border-b border-outline-variant/15 last:border-0">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-eco-leaf-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-eco-leaf-dim" style="font-size:16px;">check</span>
+        </div>
+        <span class="text-[13px] text-on-surface">${i.name}</span>
+      </div>
+      <span class="text-[12px] text-secondary font-medium">${i.amount}</span>
+    </div>
+  `).join('');
+  document.getElementById('detail-steps').innerHTML = (r.steps || []).map((s, i) => `
+    <li class="flex gap-3 items-start">
+      <div class="w-7 h-7 rounded-full bg-primary text-on-primary font-bold text-[12px] flex items-center justify-center flex-shrink-0 mt-0.5">${i+1}</div>
+      <p class="text-[13px] text-on-surface leading-relaxed flex-1">${s}</p>
+    </li>
+  `).join('');
+  document.getElementById('detail-storage').textContent = r.storage || t('storagedefault');
+  updateSaveUI();
+  goTo('detail');
+}
+
+function isSaved(r) { return savedRecipes.some(s => s.name === r.name); }
+
+function toggleSave() {
+  if (!currentRecipe) return;
+  if (isSaved(currentRecipe)) {
+    savedRecipes = savedRecipes.filter(s => s.name !== currentRecipe.name);
+    showToast(t('toastRemoved'));
+  } else {
+    savedRecipes.push(currentRecipe);
+    showToast(t('toastSaved'));
+  }
+  localStorage.setItem('ecobite_saved', JSON.stringify(savedRecipes));
+  updateSaveUI();
+}
+
+function updateSaveUI() {
+  const saved = isSaved(currentRecipe);
+  const ico = document.getElementById('fav-icon');
+  const btn = document.getElementById('save-btn');
+  if (saved) {
+    ico.style.fontVariationSettings = "'FILL' 1";
+    ico.style.color = '#8b5109';
+    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:\'FILL\' 1;">bookmark</span>' + t('saved');
+    btn.classList.remove('bg-primary');
+    btn.classList.add('bg-primary-dim');
+  } else {
+    ico.style.fontVariationSettings = "'FILL' 0";
+    ico.style.color = '';
+    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">bookmark</span>' + t('save');
+    btn.classList.add('bg-primary');
+    btn.classList.remove('bg-primary-dim');
+  }
+}
+
+function showShoppingList() {
+  if (!currentRecipe) return;
+  if (!currentRecipe.needs || currentRecipe.needs.length === 0) {
+    showToast(t('toastAllSet'));
+    return;
+  }
+  showToast(t('toastShopList') + currentRecipe.needs.join(currentLang === 'zh' ? '、' : ', '));
+}
+
+function shareRecipe() {
+  showToast(t('toastShared'));
+}
+
+function renderCookbook() {
+  const el = document.getElementById('cookbook-content');
+  if (savedRecipes.length === 0) {
+    el.innerHTML = `
+      <div class="text-center py-20">
+        <div class="w-20 h-20 rounded-full bg-eco-leaf-container mx-auto mb-4 flex items-center justify-center">
+          <span class="material-symbols-outlined text-eco-leaf-dim" style="font-size:36px;">menu_book</span>
+        </div>
+        <h3 class="font-bold font-headline text-[16px] text-on-surface mb-2">${t('cookbookempty')}</h3>
+        <p class="text-[12px] text-secondary mb-6 max-w-[240px] mx-auto leading-relaxed">${t('cookbookemptydesc')}</p>
+        <button onclick="goTo('camera')" class="h-12 px-6 bg-primary text-on-primary rounded-full font-headline font-bold text-[13px] active:scale-95 transition-transform">
+          ${t('snapleftovers')}
+        </button>
+      </div>
+    `;
+    return;
+  }
+  const wasteKg = (savedRecipes.length * 0.45).toFixed(2);
+  el.innerHTML = `
+    <div class="bg-surface-container-low rounded-DEFAULT p-3 mb-4 flex items-center gap-3">
+      <span class="material-symbols-outlined text-eco-leaf-dim" style="font-size:22px;font-variation-settings:'FILL' 1;">eco</span>
+      <p class="text-[12px] text-on-surface flex-1"><span class="font-bold">${savedRecipes.length}${t('cookbookstats_recipes')}</span><span class="font-bold text-eco-leaf-dim">${wasteKg}kg</span></p>
+    </div>
+    <div class="space-y-3">
+      ${savedRecipes.map(r => `
+        <article onclick='openDetail(${JSON.stringify(r).replace(/'/g,"&#39;")})' class="bg-surface-container-lowest rounded-DEFAULT flex overflow-hidden shadow-[0_4px_24px_rgba(56,50,35,0.04)] active:scale-[0.98] transition-transform cursor-pointer">
+          <div class="w-24 h-24 flex-shrink-0 overflow-hidden">
+            <img src="${recipePhoto(r)}" alt="${r.name}" class="w-full h-full object-cover" loading="lazy"/>
+          </div>
+          <div class="p-3 flex-1 min-w-0 flex flex-col justify-between">
+            <div>
+              <h3 class="font-headline font-bold text-[14px] text-on-surface truncate">${r.name}</h3>
+              <p class="text-[11px] text-secondary mt-0.5">${r.time} · ${r.servings} ${t('perservings')} · ${r.kcal} kcal</p>
+            </div>
+            <div class="flex gap-1.5">
+              <span class="bg-eco-leaf-container text-eco-leaf-dim text-[10px] font-bold px-2 py-0.5 rounded-full">${r.difficulty}</span>
+              <span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded-full">${r.category}</span>
+            </div>
+          </div>
+        </article>
+      `).join('')}
+    </div>
+  `;
+}
+
+/* ── HOME: render recent (last 2-3) ── */
+function renderHomeHistory() {
+  updateHomeWeekly();
+  const el = document.getElementById('home-history-list');
+  if (!el) return;
+  if (cookHistory.length === 0) {
+    el.innerHTML = `
+      <div class="bg-surface-container-low rounded-DEFAULT p-5 text-center">
+        <p class="text-[12px] text-secondary">${t('historyempty')}</p>
+      </div>`;
+    return;
+  }
+  const recent = cookHistory.slice(0, 2);
+  el.innerHTML = recent.map(h => {
+    const local = localizedHistoryEntry(h);
+    const sub = currentLang === 'zh'
+      ? `${formatDateLabel(h.ts)} · 用了 ${local.leftovers.length} 种剩食 · ${local.time}`
+      : `${formatDateLabel(h.ts)} · ${local.leftovers.length} leftovers · ${local.time}`;
+    return `
+      <div onclick="openHistoryDetail('${h.id}')" class="bg-surface-container-lowest rounded-DEFAULT flex items-center gap-3 p-3 active:scale-[0.98] transition-transform cursor-pointer">
+        <div class="w-14 h-14 rounded-DEFAULT overflow-hidden flex-shrink-0">
+          <img src="${recipePhoto({ name: local.name, category: local.category })}" alt="${local.name}" class="w-full h-full object-cover" loading="lazy"/>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-[14px] text-on-surface truncate">${local.name}</p>
+          <p class="text-[11px] text-secondary mt-0.5">${sub}</p>
+          <div class="flex gap-1.5 mt-1.5">
+            <span class="bg-eco-leaf-container text-eco-leaf-dim text-[10px] font-bold px-2 py-0.5 rounded-full">${h.recipe.match}% ${currentLang === 'zh' ? '匹配' : 'match'}</span>
+            <span class="bg-primary-container/40 text-on-primary-container text-[10px] font-bold px-2 py-0.5 rounded-full">${h.recipe.kcal} kcal</span>
+          </div>
+        </div>
+        <span class="material-symbols-outlined text-outline-variant" style="font-size:18px;">chevron_right</span>
+      </div>`;
+  }).join('');
+}
+
+/* ── HISTORY LIST SCREEN ── */
+function renderHistory() {
+  document.getElementById('history-count').textContent = cookHistory.length;
+
+  /* Eco summary */
+  const totalWaste = cookHistory.reduce((s, h) => s + (h.wasteSavedG || 0), 0);
+  const totalMoney = cookHistory.reduce((s, h) => s + (h.moneySavedRM || 0), 0);
+  document.getElementById('history-eco-summary').innerHTML = `
+    <div class="flex items-center gap-3 mb-3">
+      <span class="material-symbols-outlined text-eco-leaf-dim" style="font-size:22px;font-variation-settings:'FILL' 1;">eco</span>
+      <p class="font-bold font-headline text-[13px] text-eco-leaf-dim">${t('ecototalstats')}</p>
+    </div>
+    <div class="grid grid-cols-3 gap-2">
+      <div class="bg-white/60 rounded-DEFAULT p-2 text-center">
+        <p class="font-headline font-bold text-[18px] text-eco-leaf-dim">${(totalWaste/1000).toFixed(1)}<span class="text-[10px]">kg</span></p>
+        <p class="text-[9px] text-eco-leaf-dim font-bold uppercase tracking-wider">${t('wastesaved')}</p>
+      </div>
+      <div class="bg-white/60 rounded-DEFAULT p-2 text-center">
+        <p class="font-headline font-bold text-[18px] text-on-primary-container">${moneyStr(totalMoney)}</p>
+        <p class="text-[9px] text-on-primary-container font-bold uppercase tracking-wider">${t('moneytotal')}</p>
+      </div>
+      <div class="bg-white/60 rounded-DEFAULT p-2 text-center">
+        <p class="font-headline font-bold text-[18px] text-on-surface">${cookHistory.length}</p>
+        <p class="text-[9px] text-secondary font-bold uppercase tracking-wider">${t('cookcount')}</p>
+      </div>
+    </div>`;
+
+  /* Filter tabs */
+  const filters = [
+    { id: 'all', label: t('filterall') },
+    { id: 'fav', label: t('filterfavorites') },
+    { id: 'protein', label: t('filterprotein') },
+    { id: 'vegetable', label: t('filtervegetable') },
+    { id: '中式', label: t('catChinese') },
+    { id: '马来式', label: t('catMalaysian') },
+    { id: '西式', label: t('catWestern') },
+    { id: '汤品', label: t('catSoup') }
+  ];
+  document.getElementById('history-filter-row').innerHTML = filters.map(f => `
+    <button onclick="filterHistoryBy('${f.id}')" class="whitespace-nowrap h-9 px-4 rounded-full text-[12px] font-medium flex-shrink-0 active:scale-95 transition-transform ${f.id === currentHistoryFilter ? 'bg-primary-container text-on-primary-container shadow-sm' : 'bg-surface-container-high text-secondary'}">${f.label}</button>
+  `).join('');
+
+  /* Filter list */
+  const PROTEIN_KEYWORDS_ZH = ['鸡肉','鸡丝','牛肉','三文鱼','鱼','豆腐','虾','猪肉','鸡蛋','鸡'];
+  const PROTEIN_KEYWORDS_EN = ['chicken','beef','salmon','fish','tofu','prawn','shrimp','pork','egg'];
+  const VEG_KEYWORDS_ZH = ['蔬菜','空心菜','小白菜','茄子','西兰花','豆芽','白菜','苦瓜','韭菜','蘑菇','胡萝卜','土豆','玉米','番茄'];
+  const VEG_KEYWORDS_EN = ['veggie','vegetable','kangkung','bok choy','eggplant','broccoli','sprout','cabbage','bitter gourd','chive','mushroom','carrot','potato','corn','tomato'];
+  const isProteinEntry = (h) => {
+    const haystack = [
+      h.recipe.name, h.recipe.nameEn,
+      ...(h.leftoversUsed || []), ...(h.leftoversUsedEn || [])
+    ].join(' ').toLowerCase();
+    return PROTEIN_KEYWORDS_ZH.some(k => haystack.includes(k.toLowerCase())) ||
+           PROTEIN_KEYWORDS_EN.some(k => haystack.includes(k));
+  };
+  const isVegetableEntry = (h) => {
+    const haystack = [
+      h.recipe.name, h.recipe.nameEn,
+      ...(h.leftoversUsed || []), ...(h.leftoversUsedEn || [])
+    ].join(' ').toLowerCase();
+    return VEG_KEYWORDS_ZH.some(k => haystack.includes(k.toLowerCase())) ||
+           VEG_KEYWORDS_EN.some(k => haystack.includes(k));
+  };
+
+  let filtered = cookHistory;
+  if (currentHistoryFilter === 'fav') filtered = cookHistory.filter(h => h.isFavorite);
+  else if (currentHistoryFilter === 'protein') filtered = cookHistory.filter(isProteinEntry);
+  else if (currentHistoryFilter === 'vegetable') filtered = cookHistory.filter(isVegetableEntry);
+  else if (currentHistoryFilter !== 'all') filtered = cookHistory.filter(h => h.recipe.category === currentHistoryFilter);
+
+  if (filtered.length === 0) {
+    document.getElementById('history-list').innerHTML = `
+      <div class="text-center py-16">
+        <div class="w-20 h-20 rounded-full bg-eco-leaf-container mx-auto mb-4 flex items-center justify-center">
+          <span class="material-symbols-outlined text-eco-leaf-dim" style="font-size:36px;">restaurant</span>
+        </div>
+        <h3 class="font-bold font-headline text-[16px] text-on-surface mb-2">${t('historyempty')}</h3>
+        <p class="text-[12px] text-secondary mb-6 max-w-[240px] mx-auto leading-relaxed">${t('historyemptydesc')}</p>
+        <button onclick="goTo('camera')" class="h-12 px-6 bg-primary text-on-primary rounded-full font-headline font-bold text-[13px] active:scale-95 transition-transform">
+          ${t('starthistory')}
+        </button>
+      </div>`;
+    return;
+  }
+
+  /* Group by date label */
+  const groups = {};
+  filtered.forEach(h => {
+    const label = formatDateLabel(h.ts);
+    if (!groups[label]) groups[label] = [];
+    groups[label].push(h);
+  });
+  const groupOrder = [t('today'), t('yesterday'), t('thisweek'), t('earlier')];
+  document.getElementById('history-list').innerHTML = groupOrder.filter(g => groups[g]).map(g => `
+    <h4 class="font-bold font-headline text-[12px] text-secondary uppercase tracking-wider mb-2 mt-4 first:mt-0">${g}</h4>
+    <div class="space-y-2">
+      ${groups[g].map(h => {
+        const local = localizedHistoryEntry(h);
+        return `
+        <article onclick="openHistoryDetail('${h.id}')" class="bg-surface-container-lowest rounded-DEFAULT flex overflow-hidden shadow-[0_4px_24px_rgba(56,50,35,0.04)] active:scale-[0.98] transition-transform cursor-pointer">
+          <div class="w-24 h-24 flex-shrink-0 overflow-hidden relative">
+            <img src="${recipePhoto({ name: local.name, category: local.category })}" alt="${local.name}" class="w-full h-full object-cover" loading="lazy"/>
+            ${h.isFavorite ? `<div class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-white/90 flex items-center justify-center"><span class="material-symbols-outlined text-error" style="font-size:14px;font-variation-settings:'FILL' 1;">favorite</span></div>` : ''}
+          </div>
+          <div class="p-3 flex-1 min-w-0 flex flex-col justify-between">
+            <div>
+              <h3 class="font-headline font-bold text-[14px] text-on-surface truncate">${local.name}</h3>
+              <p class="text-[10px] text-secondary mt-0.5 truncate">${formatExactDate(h.ts)}</p>
+              <div class="flex items-center gap-1 mt-1">
+                ${[1,2,3,4,5].map(n => `<span class="material-symbols-outlined ${n <= h.rating ? 'text-amber-500' : 'text-outline-variant'}" style="font-size:11px;font-variation-settings:'FILL' ${n <= h.rating ? 1 : 0};color:${n <= h.rating ? '#EF9F27' : '#bcb19c'}">star</span>`).join('')}
+              </div>
+            </div>
+            <div class="flex gap-1.5 flex-wrap">
+              <span class="bg-eco-leaf-container text-eco-leaf-dim text-[9px] font-bold px-1.5 py-0.5 rounded-full">${(h.wasteSavedG/1000).toFixed(2)}kg</span>
+              <span class="bg-primary-container/40 text-on-primary-container text-[9px] font-bold px-1.5 py-0.5 rounded-full">${moneyStr(h.moneySavedRM)}</span>
+            </div>
+          </div>
+        </article>`;
+      }).join('')}
+    </div>`).join('');
+}
+
+function filterHistoryBy(id) {
+  currentHistoryFilter = id;
+  renderHistory();
+}
+
+function clearHistory() {
+  if (!confirm(t('confirmclear'))) return;
+  cookHistory = [];
+  localStorage.setItem('ecobite_history_v3', JSON.stringify(cookHistory));
+  renderHistory();
+  renderHomeHistory();
+  showToast(t('historycleared'));
+}
+
+/* ── HISTORY DETAIL SCREEN ── */
+function openHistoryDetail(id) {
+  const h = cookHistory.find(x => x.id === id);
+  if (!h) return;
+  currentHistoryEntry = h;
+  notesDirty = false;
+
+  const local = localizedHistoryEntry(h);
+  const photo = recipePhoto({ name: local.name, category: local.category });
+
+  document.getElementById('hd-hero').style.background = `url('${photo}') center/cover no-repeat, #f3e8d6`;
+  document.getElementById('hd-hero-content').innerHTML = `
+    <div class="flex items-center gap-2 mb-2">
+      ${h.isFavorite ? `<span class="material-symbols-outlined text-white/95" style="font-size:20px;font-variation-settings:'FILL' 1;color:#ED93B1;">favorite</span>` : ''}
+      <span class="bg-white/25 backdrop-blur text-white text-[11px] font-bold px-2.5 py-1 rounded-full">${local.category}</span>
+    </div>
+    <h2 class="font-headline font-bold text-2xl mb-1 drop-shadow-lg">${local.name}</h2>
+    <p class="text-white/90 text-[12px] drop-shadow">${local.time} · ${local.difficulty} · ${h.recipe.kcal} kcal</p>
+  `;
+
+  document.getElementById('hd-date').textContent = formatExactDate(h.ts);
+  document.getElementById('hd-rating').innerHTML = [1,2,3,4,5].map(n => `
+    <button onclick="setRating(${n})" class="active:scale-125 transition-transform">
+      <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' ${n <= h.rating ? 1 : 0};color:${n <= h.rating ? '#EF9F27' : '#bcb19c'};">star</span>
+    </button>
+  `).join('');
+
+  document.getElementById('hd-waste').textContent = (h.wasteSavedG/1000).toFixed(2) + 'kg';
+  document.getElementById('hd-money').textContent = moneyStr(h.moneySavedRM);
+
+  const minLabel = currentLang === 'zh' ? '分钟' : 'min';
+  const servLabel = t('perservings').toUpperCase();
+  document.getElementById('hd-stats').innerHTML = `
+    <div class="bg-surface-container-low rounded-DEFAULT p-3 text-center">
+      <p class="text-2xl font-bold font-headline text-primary">${h.recipe.kcal}</p>
+      <p class="text-[10px] text-secondary font-bold uppercase tracking-wider mt-0.5">kcal</p>
+    </div>
+    <div class="bg-surface-container-low rounded-DEFAULT p-3 text-center">
+      <p class="text-2xl font-bold font-headline text-on-surface">${h.recipe.servings}</p>
+      <p class="text-[10px] text-secondary font-bold uppercase tracking-wider mt-0.5">${servLabel}</p>
+    </div>
+    <div class="bg-surface-container-low rounded-DEFAULT p-3 text-center">
+      <p class="text-2xl font-bold font-headline text-on-surface">${(local.time + '').replace(/[^\d]/g,'')}</p>
+      <p class="text-[10px] text-secondary font-bold uppercase tracking-wider mt-0.5">${minLabel}</p>
+    </div>`;
+
+  document.getElementById('hd-leftovers').innerHTML = local.leftovers.map(item => `
+    <span class="h-9 px-4 rounded-full bg-eco-leaf-container text-eco-leaf-dim text-[13px] font-medium flex items-center gap-1.5">
+      <span class="material-symbols-outlined" style="font-size:14px;">check</span>
+      ${item}
+    </span>
+  `).join('');
+
+  /* User photo (if uploaded during this cooking session) */
+  const photoSection = document.getElementById('hd-userphoto-section');
+  if (h.userPhoto) {
+    photoSection.classList.remove('hidden');
+    document.getElementById('hd-userphoto').src = h.userPhoto;
+  } else {
+    photoSection.classList.add('hidden');
+  }
+
+  document.getElementById('hd-steps').innerHTML = local.steps.map((s, i) => `
+    <li class="flex gap-3 items-start">
+      <div class="w-7 h-7 rounded-full bg-primary text-on-primary font-bold text-[12px] flex items-center justify-center flex-shrink-0 mt-0.5">${i+1}</div>
+      <p class="text-[13px] text-on-surface leading-relaxed flex-1">${s}</p>
+    </li>
+  `).join('');
+
+  const notesEl = document.getElementById('hd-notes');
+  notesEl.value = h.notes || '';
+  notesEl.placeholder = t('notesplaceholder');
+  document.getElementById('save-notes-btn').classList.add('hidden');
+
+  goTo('history-detail');
+}
+
+function setRating(n) {
+  if (!currentHistoryEntry) return;
+  currentHistoryEntry.rating = n;
+  /* update store */
+  cookHistory = cookHistory.map(h => h.id === currentHistoryEntry.id ? currentHistoryEntry : h);
+  localStorage.setItem('ecobite_history_v3', JSON.stringify(cookHistory));
+  /* re-render rating UI */
+  document.getElementById('hd-rating').innerHTML = [1,2,3,4,5].map(x => `
+    <button onclick="setRating(${x})" class="active:scale-125 transition-transform">
+      <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' ${x <= n ? 1 : 0};color:${x <= n ? '#EF9F27' : '#bcb19c'};">star</span>
+    </button>
+  `).join('');
+}
+
+function markNotesDirty() {
+  notesDirty = true;
+  document.getElementById('save-notes-btn').classList.remove('hidden');
+}
+
+function saveNotes() {
+  if (!currentHistoryEntry) return;
+  const notes = document.getElementById('hd-notes').value;
+  currentHistoryEntry.notes = notes;
+  cookHistory = cookHistory.map(h => h.id === currentHistoryEntry.id ? currentHistoryEntry : h);
+  localStorage.setItem('ecobite_history_v3', JSON.stringify(cookHistory));
+  document.getElementById('save-notes-btn').classList.add('hidden');
+  notesDirty = false;
+  showToast(t('notessaved'));
+}
+
+function deleteHistoryEntry() {
+  if (!currentHistoryEntry) return;
+  cookHistory = cookHistory.filter(h => h.id !== currentHistoryEntry.id);
+  localStorage.setItem('ecobite_history_v3', JSON.stringify(cookHistory));
+  showToast(t('historydeleted'));
+  goTo('history');
+}
+
+function cookAgain() {
+  if (!currentHistoryEntry) return;
+  /* Pre-fill ingredients with what was used last time, jump to ingredients screen */
+  const local = localizedHistoryEntry(currentHistoryEntry);
+  ingredients = [...local.leftovers];
+  renderChips();
+  goTo('ingredients');
+}
+
+/* ────────── SEARCH FUNCTIONALITY ──────────
+   Searchable across 3 indexes:
+   1. INGREDIENTS_INDEX — common pantry items (bilingual aliases)
+   2. RECIPE_LIBRARY — discoverable recipes (uses RECIPE_PHOTOS for thumbnails)
+   3. cookHistory — user's past cooks
+*/
+const INGREDIENTS_INDEX = [
+  { zh: '鸡蛋',   en: 'eggs',     cat: 'protein', emoji: '🥚' },
+  { zh: '米饭',   en: 'rice',     cat: 'grain',   emoji: '🍚' },
+  { zh: '面条',   en: 'noodles',  cat: 'grain',   emoji: '🍜' },
+  { zh: '胡萝卜', en: 'carrots',  cat: 'veg',     emoji: '🥕' },
+  { zh: '洋葱',   en: 'onion',    cat: 'veg',     emoji: '🧅' },
+  { zh: '大蒜',   en: 'garlic',   cat: 'veg',     emoji: '🧄' },
+  { zh: '番茄',   en: 'tomato',   cat: 'veg',     emoji: '🍅' },
+  { zh: '土豆',   en: 'potato',   cat: 'veg',     emoji: '🥔' },
+  { zh: '青椒',   en: 'pepper',   cat: 'veg',     emoji: '🫑' },
+  { zh: '蘑菇',   en: 'mushroom', cat: 'veg',     emoji: '🍄' },
+  { zh: '西兰花', en: 'broccoli', cat: 'veg',     emoji: '🥦' },
+  { zh: '白菜',   en: 'cabbage',  cat: 'veg',     emoji: '🥬' },
+  { zh: '茄子',   en: 'eggplant', cat: 'veg',     emoji: '🍆' },
+  { zh: '玉米',   en: 'corn',     cat: 'grain',   emoji: '🌽' },
+  { zh: '空心菜', en: 'kangkung',     cat: 'veg', emoji: '🥬' },
+  { zh: '小白菜', en: 'bok choy',     cat: 'veg', emoji: '🥬' },
+  { zh: '苦瓜',   en: 'bitter gourd', cat: 'veg', emoji: '🥒' },
+  { zh: '豆芽',   en: 'bean sprouts', cat: 'veg', emoji: '🌱' },
+  { zh: '韭菜',   en: 'chives',       cat: 'veg', emoji: '🌿' },
+  { zh: '辣椒',   en: 'chili',        cat: 'veg', emoji: '🌶️' },
+  { zh: '生姜',   en: 'ginger',       cat: 'veg', emoji: '🫚' },
+  { zh: '青葱',   en: 'scallions',    cat: 'veg', emoji: '🌿' },
+  { zh: '鸡肉',   en: 'chicken',  cat: 'protein', emoji: '🍗' },
+  { zh: '牛肉',   en: 'beef',     cat: 'protein', emoji: '🥩' },
+  { zh: '虾',     en: 'shrimp',   cat: 'protein', emoji: '🦐' },
+  { zh: '豆腐',   en: 'tofu',     cat: 'protein', emoji: '🍱' },
+  { zh: '奶酪',   en: 'cheese',   cat: 'protein', emoji: '🧀' },
+  { zh: '三文鱼', en: 'salmon',   cat: 'protein', emoji: '🐟' },
+  { zh: '猪肉',   en: 'pork',     cat: 'protein', emoji: '🥓' }
+];
+
+const RECIPE_LIBRARY = [
+  { name: '蔬菜蛋炒饭', nameEn: 'Veggie fried rice',  category: '中式', categoryEn: 'Chinese', time: '20 分钟', timeEn: '20 min', kcal: 320, difficulty: '初级', difficultyEn: 'Easy', match: 92, needs: [], servings: 2,
+    ingredients: [{name:'米饭',amount:'2 碗'},{name:'鸡蛋',amount:'2 个'},{name:'胡萝卜',amount:'1 根'},{name:'洋葱',amount:'半个'},{name:'大蒜',amount:'3 瓣'}],
+    steps: ['热锅下油，蒜末爆香。','加入切丁胡萝卜翻炒。','倒入米饭翻炒均匀。','打入鸡蛋炒散。','加调料起锅。'],
+    stepsEn: ['Heat oil, sauté garlic.','Add diced carrots, stir-fry.','Add rice and mix.','Crack in eggs and scramble.','Season and serve.'],
+    keywords_zh: '蔬菜 蛋 炒饭 米饭 中式', keywords_en: 'veggie egg fried rice chinese' },
+  { name: '胡萝卜浓汤', nameEn: 'Carrot ginger soup', category: '汤品', categoryEn: 'Soup', time: '30 分钟', timeEn: '30 min', kcal: 180, difficulty: '初级', difficultyEn: 'Easy', match: 76, needs: ['生姜','蔬菜高汤'], servings: 4,
+    ingredients: [{name:'胡萝卜',amount:'4 根'},{name:'洋葱',amount:'1 个'},{name:'大蒜',amount:'3 瓣'}],
+    steps: ['黄油融化，洋葱蒜末小火炒。','加胡萝卜和姜片续炒。','倒入高汤煮沸后小火 20 分钟。','打成顺滑浓汤。','调味装饰。'],
+    stepsEn: ['Melt butter, sauté onion and garlic.','Add carrots and ginger.','Pour broth, simmer 20 min.','Blend smooth.','Season and serve.'],
+    keywords_zh: '胡萝卜 浓汤 汤 蔬菜', keywords_en: 'carrot ginger soup vegetable' },
+  { name: '鸡蛋蔬菜炒', nameEn: 'Egg & veg stir fry', category: '中式', categoryEn: 'Chinese', time: '15 分钟', timeEn: '15 min', kcal: 280, difficulty: '初级', difficultyEn: 'Easy', match: 85, needs: ['酱油'], servings: 2,
+    ingredients: [{name:'鸡蛋',amount:'3 个'},{name:'洋葱',amount:'半个'}],
+    steps: ['鸡蛋打散加少许盐。','热锅下油爆香蒜末。','加蔬菜翻炒。','倒入蛋液炒至金黄。','加酱油翻匀。'],
+    stepsEn: ['Beat eggs with salt.','Sauté garlic in hot oil.','Add vegetables.','Pour in eggs, cook golden.','Add soy sauce.'],
+    keywords_zh: '鸡蛋 蔬菜 炒 中式 快手', keywords_en: 'egg vegetable stir fry chinese quick' },
+  { name: '番茄鸡蛋面', nameEn: 'Tomato egg noodles', category: '中式', categoryEn: 'Chinese', time: '15 分钟', timeEn: '15 min', kcal: 380, difficulty: '初级', difficultyEn: 'Easy', match: 88, needs: [], servings: 2,
+    ingredients: [{name:'面条',amount:'200g'},{name:'番茄',amount:'2 个'},{name:'鸡蛋',amount:'2 个'}],
+    steps: ['番茄切块，洋葱切丝。','炒香蒜末加洋葱。','加番茄炒出汁。','倒水煮沸下面条。','打蛋花调味。'],
+    stepsEn: ['Chop tomato, slice onion.','Sauté garlic and onion.','Add tomato, cook juicy.','Boil water, add noodles.','Drop in egg, season.'],
+    keywords_zh: '番茄 鸡蛋 面 中式', keywords_en: 'tomato egg noodle chinese' },
+  { name: '法式蛋饼卷', nameEn: 'Veggie omelette wrap', category: '西式', categoryEn: 'Western', time: '10 分钟', timeEn: '10 min', kcal: 350, difficulty: '初级', difficultyEn: 'Easy', match: 80, needs: ['墨西哥饼'], servings: 1,
+    ingredients: [{name:'鸡蛋',amount:'3 个'},{name:'洋葱',amount:'1/4 个'}],
+    steps: ['鸡蛋打散调味。','倒入热油平底锅。','撒蔬菜在蛋液上。','轻轻折叠。','卷在饼里。'],
+    stepsEn: ['Beat eggs and season.','Pour into hot pan.','Sprinkle veggies on top.','Fold gently.','Roll in tortilla.'],
+    keywords_zh: '蛋饼 卷 西式 早餐', keywords_en: 'omelette wrap western breakfast' },
+  { name: '土豆沙拉', nameEn: 'Potato salad', category: '沙拉', categoryEn: 'Salad', time: '25 分钟', timeEn: '25 min', kcal: 240, difficulty: '初级', difficultyEn: 'Easy', match: 70, needs: ['蛋黄酱'], servings: 4,
+    ingredients: [{name:'土豆',amount:'4 个'},{name:'鸡蛋',amount:'2 个'},{name:'洋葱',amount:'半个'}],
+    steps: ['土豆煮熟切丁。','鸡蛋煮熟切碎。','洋葱切碎。','拌入蛋黄酱。','调味冷藏。'],
+    stepsEn: ['Boil potatoes, cube.','Boil eggs, chop.','Dice onion.','Mix with mayo.','Season and chill.'],
+    keywords_zh: '土豆 沙拉 西式', keywords_en: 'potato salad western' }
+];
+
+let recentSearches = JSON.parse(localStorage.getItem('ecobite_recent_searches') || '[]');
+const POPULAR_SEARCHES_ZH = ['鸡蛋', '米饭', '炒饭', '汤', '快手菜', '番茄'];
+const POPULAR_SEARCHES_EN = ['eggs', 'rice', 'fried rice', 'soup', 'quick', 'tomato'];
+
+function normalizeSearch(s) { return (s || '').toLowerCase().trim(); }
+
+function searchAll(query) {
+  const q = normalizeSearch(query);
+  if (!q) return { recipes: [], ings: [], history: [] };
+
+  /* 1. Search ingredients */
+  const ings = INGREDIENTS_INDEX.filter(i =>
+    i.zh.toLowerCase().includes(q) ||
+    i.en.toLowerCase().includes(q) ||
+    i.cat.includes(q)
+  );
+
+  /* 2. Search recipe library */
+  const recipes = RECIPE_LIBRARY.filter(r => {
+    const haystack = [
+      r.name, r.nameEn,
+      r.category, r.categoryEn,
+      r.time, r.timeEn,
+      r.keywords_zh, r.keywords_en,
+      ...(r.ingredients || []).map(i => i.name)
+    ].join(' ').toLowerCase();
+    return haystack.includes(q);
+  });
+
+  /* 3. Search past cooks */
+  const history = cookHistory.filter(h => {
+    const haystack = [
+      h.recipe.name, h.recipe.nameEn,
+      h.recipe.category, h.recipe.categoryEn,
+      h.notes,
+      ...(h.leftoversUsed || []),
+      ...(h.leftoversUsedEn || [])
+    ].join(' ').toLowerCase();
+    return haystack.includes(q);
+  });
+
+  return { recipes, ings, history };
+}
+
+function performSearch(query) {
+  const clearBtn = document.getElementById('search-clear');
+  const empty = document.getElementById('search-empty');
+  const results = document.getElementById('search-results');
+
+  if (!query || !query.trim()) {
+    clearBtn.classList.add('hidden');
+    empty.classList.remove('hidden');
+    results.classList.add('hidden');
+    renderSearchEmpty();
+    return;
+  }
+  clearBtn.classList.remove('hidden');
+  empty.classList.add('hidden');
+  results.classList.remove('hidden');
+
+  const r = searchAll(query);
+  renderSearchResults(r, query);
+}
+
+function renderSearchEmpty() {
+  /* Recent searches */
+  const recentEl = document.getElementById('recent-searches-list');
+  const recentSection = document.getElementById('recent-searches-section');
+  if (recentSearches.length === 0) {
+    recentSection.classList.add('hidden');
+  } else {
+    recentSection.classList.remove('hidden');
+    recentEl.innerHTML = recentSearches.slice(0, 8).map(q => `
+      <button onclick="runSearch('${q.replace(/'/g, "\\'")}')" class="h-9 px-3 rounded-full bg-surface-container-high text-secondary text-[12px] font-medium flex items-center gap-1.5 active:scale-95 transition-transform">
+        <span class="material-symbols-outlined" style="font-size:14px;">history</span>
+        ${q}
+      </button>`).join('');
+  }
+
+  /* Popular */
+  const pops = currentLang === 'zh' ? POPULAR_SEARCHES_ZH : POPULAR_SEARCHES_EN;
+  document.getElementById('popular-list').innerHTML = pops.map(q => `
+    <button onclick="runSearch('${q.replace(/'/g, "\\'")}')" class="h-9 px-3 rounded-full bg-primary-container/30 text-on-primary-container text-[12px] font-bold active:scale-95 transition-transform flex items-center gap-1.5">
+      <span class="material-symbols-outlined" style="font-size:14px;">trending_up</span>
+      ${q}
+    </button>`).join('');
+
+  /* Categories */
+  const cats = [
+    { key: 'veg', label: t('catVeg'), icon: '🥕', color: 'eco-leaf-container', text: 'eco-leaf-dim' },
+    { key: 'protein', label: t('catProtein'), icon: '🥩', color: 'primary-container', text: 'on-primary-container' },
+    { key: 'grain', label: t('catGrain'), icon: '🍚', color: 'secondary-container', text: 'on-secondary-container' },
+    { key: 'leftover', label: t('catLeftover'), icon: '🍱', color: 'surface-container-high', text: 'on-surface' }
+  ];
+  document.getElementById('search-categories').innerHTML = cats.map(c => `
+    <button onclick="runSearch('${c.key}')" class="bg-${c.color} rounded-DEFAULT p-4 text-left active:scale-95 transition-transform">
+      <div class="text-[28px] mb-1.5">${c.icon}</div>
+      <p class="font-bold text-[13px] text-${c.text}">${c.label}</p>
+    </button>`).join('');
+}
+
+function renderSearchResults(r, query) {
+  const total = r.recipes.length + r.ings.length + r.history.length;
+
+  /* Recipes group */
+  const recipesSection = document.getElementById('results-recipes-section');
+  if (r.recipes.length === 0) {
+    recipesSection.classList.add('hidden');
+  } else {
+    recipesSection.classList.remove('hidden');
+    document.getElementById('results-recipes-count').textContent = r.recipes.length;
+    document.getElementById('results-recipes-list').innerHTML = r.recipes.map(rec => {
+      const isEn = currentLang === 'en';
+      const name = isEn ? rec.nameEn : rec.name;
+      const cat = isEn ? rec.categoryEn : rec.category;
+      const time = isEn ? rec.timeEn : rec.time;
+      const diff = isEn ? rec.difficultyEn : rec.difficulty;
+      return `
+      <article onclick='openRecipeFromSearch(${JSON.stringify(rec).replace(/'/g, "&#39;")})' class="bg-surface-container-lowest rounded-DEFAULT flex overflow-hidden shadow-[0_2px_12px_rgba(56,50,35,0.04)] active:scale-[0.98] transition-transform cursor-pointer">
+        <div class="w-20 h-20 flex-shrink-0 overflow-hidden">
+          <img src="${recipePhoto({ name: rec.name, category: rec.category })}" alt="${name}" class="w-full h-full object-cover" loading="lazy"/>
+        </div>
+        <div class="p-3 flex-1 min-w-0 flex flex-col justify-between">
+          <div>
+            <h3 class="font-headline font-bold text-[13px] text-on-surface truncate">${highlight(name, query)}</h3>
+            <p class="text-[11px] text-secondary mt-0.5">${time} · ${diff} · ${rec.kcal} kcal</p>
+          </div>
+          <div class="flex gap-1.5 mt-1">
+            <span class="bg-eco-leaf-container text-eco-leaf-dim text-[10px] font-bold px-2 py-0.5 rounded-full">${cat}</span>
+          </div>
+        </div>
+        <div class="flex items-center pr-3">
+          <span class="material-symbols-outlined text-outline-variant" style="font-size:18px;">chevron_right</span>
+        </div>
+      </article>`;
+    }).join('');
+  }
+
+  /* Ingredients group */
+  const ingsSection = document.getElementById('results-ings-section');
+  if (r.ings.length === 0) {
+    ingsSection.classList.add('hidden');
+  } else {
+    ingsSection.classList.remove('hidden');
+    document.getElementById('results-ings-count').textContent = r.ings.length;
+    document.getElementById('results-ings-list').innerHTML = r.ings.map(i => {
+      const label = currentLang === 'zh' ? i.zh : i.en;
+      return `
+      <button onclick="addIngredientFromSearch('${label.replace(/'/g,"\\'")}')" class="h-10 px-3 rounded-full bg-eco-leaf-container text-eco-leaf-dim text-[13px] font-medium flex items-center gap-1.5 active:scale-95 transition-transform">
+        <span style="font-size:16px;">${i.emoji}</span>
+        ${highlight(label, query)}
+        <span class="material-symbols-outlined opacity-70" style="font-size:14px;">add</span>
+      </button>`;
+    }).join('');
+  }
+
+  /* History group */
+  const histSection = document.getElementById('results-history-section');
+  if (r.history.length === 0) {
+    histSection.classList.add('hidden');
+  } else {
+    histSection.classList.remove('hidden');
+    document.getElementById('results-history-count').textContent = r.history.length;
+    document.getElementById('results-history-list').innerHTML = r.history.map(h => {
+      const local = localizedHistoryEntry(h);
+      return `
+      <article onclick="openHistoryDetail('${h.id}')" class="bg-surface-container-lowest rounded-DEFAULT flex items-center gap-3 p-3 active:scale-[0.98] transition-transform cursor-pointer">
+        <div class="w-12 h-12 rounded-DEFAULT overflow-hidden flex-shrink-0">
+          <img src="${recipePhoto({ name: local.name, category: local.category })}" alt="${local.name}" class="w-full h-full object-cover" loading="lazy"/>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-[13px] text-on-surface truncate">${highlight(local.name, query)}</p>
+          <p class="text-[10px] text-secondary mt-0.5">${formatDateLabel(h.ts)} · ${local.leftovers.length} ${t('items')} · ${moneyStr(h.moneySavedRM)}</p>
+        </div>
+        <span class="material-symbols-outlined text-outline-variant flex-shrink-0" style="font-size:18px;">chevron_right</span>
+      </article>`;
+    }).join('');
+  }
+
+  /* No results */
+  document.getElementById('results-empty').classList.toggle('hidden', total > 0);
+
+  /* Save to recent searches if has results */
+  if (total > 0 && query.length >= 2) {
+    addToRecentSearches(query);
+  }
+}
+
+function highlight(text, query) {
+  if (!query) return text;
+  const q = query.trim();
+  if (!q) return text;
+  const regex = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+  return text.replace(regex, '<mark style="background:#FAEEDA;color:#854F0B;padding:0 2px;border-radius:3px;">$1</mark>');
+}
+
+function runSearch(query) {
+  const inp = document.getElementById('search-input');
+  inp.value = query;
+  performSearch(query);
+}
+
+function clearSearch() {
+  document.getElementById('search-input').value = '';
+  performSearch('');
+  document.getElementById('search-input').focus();
+}
+
+function addToRecentSearches(query) {
+  const q = query.trim();
+  if (!q) return;
+  recentSearches = [q, ...recentSearches.filter(x => x.toLowerCase() !== q.toLowerCase())].slice(0, 10);
+  localStorage.setItem('ecobite_recent_searches', JSON.stringify(recentSearches));
+}
+
+function clearRecentSearches() {
+  recentSearches = [];
+  localStorage.setItem('ecobite_recent_searches', JSON.stringify(recentSearches));
+  renderSearchEmpty();
+}
+
+function openRecipeFromSearch(rec) {
+  /* Build the rich detail object using the library entry */
+  const r = {
+    name: currentLang === 'en' ? rec.nameEn : rec.name,
+    category: currentLang === 'en' ? rec.categoryEn : rec.category,
+    time: currentLang === 'en' ? rec.timeEn : rec.time,
+    difficulty: currentLang === 'en' ? rec.difficultyEn : rec.difficulty,
+    kcal: rec.kcal, servings: rec.servings, match: rec.match, needs: rec.needs || [],
+    ingredients: rec.ingredients || [],
+    steps: currentLang === 'en' ? rec.stepsEn : rec.steps,
+    storage: ''
+  };
+  openDetail(r);
+}
+
+function addIngredientFromSearch(name) {
+  if (!ingredients.includes(name)) {
+    ingredients.push(name);
+    const indexed = lookupIngredient(name);
+    detectedDetails.push({
+      name: name,
+      confidence: 1,
+      category: indexed ? indexed.cat : 'other',
+      amount: '',
+      emoji: indexed ? indexed.emoji : null
+    });
+  }
+  renderChips();
+  showToast(t('addtoings') + ': ' + name);
+  goTo('ingredients');
+}
+
+document.addEventListener('DOMContentLoaded', applyLang);
+applyLang();
+</script>
+</body>
+</html>
